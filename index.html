@@ -8,12 +8,14 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Orbitron:wght@500&display=swap" rel="stylesheet">
 
 <style>
+
 body{
 margin:0;
-background:linear-gradient(180deg,#0f0f0f,#1a1a1a);
-color:#ddd;
+background: radial-gradient(circle at center, #1a1a1a 0%, #0a0a0a 60%, #000 100%);
+color:#ccc;
 font-family:'Cinzel',serif;
 overflow-x:hidden;
+scroll-behavior:smooth;
 }
 
 section{
@@ -22,55 +24,120 @@ display:flex;
 flex-direction:column;
 justify-content:center;
 align-items:center;
-padding:40px;
+padding:60px 20px;
 text-align:center;
+opacity:0;
+transform:translateY(30px);
+transition:1s ease;
+}
+
+section.active{
+opacity:1;
+transform:translateY(0);
 }
 
 h1{
-font-size:50px;
-color:silver;
-text-shadow:0 0 20px gray;
+font-size:55px;
+color:#c0c0c0;
+text-shadow:0 0 20px #888, 0 0 40px #444;
+letter-spacing:3px;
+}
+
+h2{
+color:#aaa;
+margin-top:30px;
+}
+
+p{
+max-width:900px;
+line-height:1.8;
+font-size:17px;
 }
 
 button{
-padding:12px 25px;
-background:#2b2b2b;
-color:white;
-border:1px solid silver;
+padding:12px 28px;
+background:transparent;
+border:2px solid #555;
+color:#ccc;
+font-family:'Orbitron',sans-serif;
 cursor:pointer;
-margin:10px;
-transition:0.3s;
+margin:12px;
+transition:0.4s;
+letter-spacing:1px;
 }
 
 button:hover{
-background:silver;
+background:#c0c0c0;
 color:black;
+box-shadow:0 0 20px silver;
 }
 
 .hidden{display:none;}
 
 .menu-box{
 display:flex;
-gap:20px;
+gap:30px;
 flex-wrap:wrap;
 justify-content:center;
+margin-top:40px;
 }
 
-.card{
+.menu-btn{
+width:220px;
+padding:18px;
+border:2px solid #444;
 background:#111;
-border:1px solid silver;
-padding:20px;
-width:260px;
+transition:0.4s;
 }
 
-.card:hover{
-background:#1f1f1f;
+.menu-btn:hover{
+background:#1a1a1a;
+border-color:silver;
+box-shadow:0 0 25px #888;
 }
 
 .member-list{
-text-align:left;
+background:#0d0d0d;
+padding:30px;
+border:1px solid #333;
+margin-top:40px;
+width:100%;
 max-width:800px;
+text-align:left;
+}
+
+.member-list li{
+margin:6px 0;
+}
+
+.topup-box{
+display:flex;
+gap:40px;
+flex-wrap:wrap;
+justify-content:center;
 margin-top:30px;
+}
+
+.topup-card{
+background:#111;
+padding:25px;
+border:1px solid #333;
+width:260px;
+transition:0.4s;
+}
+
+.topup-card:hover{
+border-color:silver;
+box-shadow:0 0 20px #777;
+}
+
+a{
+color:#c0c0c0;
+text-decoration:none;
+}
+
+a:hover{
+text-shadow:0 0 10px silver;
 }
 
 .mystery{
@@ -79,12 +146,19 @@ bottom:20px;
 right:20px;
 background:black;
 color:white;
-width:40px;
-height:40px;
+width:45px;
+height:45px;
 display:flex;
 align-items:center;
 justify-content:center;
+font-weight:bold;
 cursor:pointer;
+border:1px solid #444;
+transition:0.3s;
+}
+
+.mystery:hover{
+box-shadow:0 0 20px silver;
 }
 
 .mystery-box{
@@ -95,63 +169,63 @@ background:black;
 color:white;
 padding:20px;
 display:none;
+border:1px solid #444;
 }
 
-a{color:silver;text-decoration:none;}
+.fade-bg{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:linear-gradient(180deg, rgba(0,0,0,0.7), rgba(0,0,0,0.9));
+pointer-events:none;
+z-index:-1;
+}
+
 </style>
 </head>
 
 <body>
 
-<!-- SLIDE 1 -->
-<section id="home">
+<div class="fade-bg"></div>
+
+<section id="home" class="active">
 <h1>Welcome To Cursebane</h1>
-<p>Website resmi Curse Community.<br>Tempat sejarah, perjalanan, dan top up server Curse.</p>
-<button onclick="enterSite()">Enter</button>
+<p>Website resmi Curse Community.<br>Perjalanan, sejarah, dan kekuatan yang lahir dari dungeon kegelapan.</p>
+<button onclick="enterSite()">ENTER</button>
 </section>
 
-<!-- SLIDE 2 -->
 <section id="menu" class="hidden">
 <h1>Cursebane Community</h1>
 <div class="menu-box">
-<button onclick="showSejarah()">Sejarah Curse</button>
-<button onclick="showTopup()">Cursebane Top Up</button>
-<button onclick="showSeries()">Series Yang Hadir</button>
+<button class="menu-btn" onclick="showSejarah()">Sejarah Curse</button>
+<button class="menu-btn" onclick="showTopup()">Cursebane Top Up</button>
+<button class="menu-btn" onclick="showSeries()">Series Yang Hadir</button>
 </div>
 </section>
 
-<!-- SEJARAH -->
 <section id="sejarah" class="hidden">
 <h1>Sejarah Curse</h1>
-<p style="max-width:900px;line-height:1.7;text-align:justify;">
-Curse pertama kali didirikan pada Februari 2023 dengan nama <b>Curse Vanilla MCPE</b>, 
-server bertema vanilla sederhana yang berjalan hingga Mei 2023. 
-Server ini dibuat oleh Montxyx — nama yang berasal dari nickname acak saat ia bermain Minecraft MCPE.
+<p>
+Curse bermula pada Februari 2023 dengan nama Curse Vanilla MCPE, server sederhana bertema vanilla.
+Didirikan oleh Montxyx — nama unik yang lahir dari nickname acak saat bermain Minecraft.
 
-Series kedua adalah <b>COLTK (Curse Of The Legend Key)</b>, 
-server bertema BHC dengan custom enchant level tinggi, 
-berjalan dari Desember 2023 hingga Maret 2024. 
-Di fase inilah Mont mulai membangun series Java Edition.
+Perjalanan berlanjut ke COLTK (Curse Of The Legend Key), server BHC dengan custom enchant level tinggi.
+Di sinilah Mont mulai membangun series Java Edition dan membentuk identitas Curse.
 
-Mont kemudian bertemu Epan (fase 2, Januari 2024), 
-dan mulai belajar plugin serta script meski series awal belum sempurna.
+Fase berikutnya mempertemukan Mont dengan Epan, Sanopalz, dan Zensuan —
+orang-orang penting dalam perjalanan teknis dan pengembangan server.
 
-Perjalanan berlanjut ke server Last Warrior & LWHC, 
-di mana Mont mengenal Sanopalz dan Zensuan. 
-Sanopalz menjadi salah satu sosok penting yang membantu setup server.
+Kemudian lahir Cursefury Legends (CFL), menjadi titik kebangkitan komunitas.
+Didukung Rexdzio, Ahmad, Latif, dan banyak member lainnya.
 
-Series berikutnya adalah <b>Cursefury Legends (CFL)</b>, 
-awal kebangkitan besar Curse di Java Edition. 
-Mont merekrut Rexdzio, Ahmad (PakSamsul7), serta didukung Latif.
+Setelah 3 tahun perjalanan (2023–2026),
+Mont memutuskan menghadirkan series terakhir:
+Survival RPG dengan custom enchant luar biasa dan dungeon menyeramkan.
 
-Kemudian hadir Curseborne Kingdom. 
-Setelah 3 tahun perjalanan (2023–2026), 
-Mont memutuskan membuat series terakhir sebagai bentuk penghormatan kepada Curse Community.
-
-Kini lahirlah server terakhir: 
-Survival RPG dengan custom enchant luar biasa dan dungeon menantang.
-
-Mont berterima kasih kepada seluruh member dan support system yang telah menemani perjalanan ini.
+Ini bukan hanya server.
+Ini adalah akhir perjalanan Curse.
 </p>
 
 <div class="member-list">
@@ -171,34 +245,41 @@ Mont berterima kasih kepada seluruh member dan support system yang telah meneman
 <button onclick="backMenu()">Kembali</button>
 </section>
 
-<!-- TOP UP -->
 <section id="topup" class="hidden">
 <h1>Cursebane Top Up</h1>
 
-<h2>Money</h2>
-<p>5000 Money - 7K</p>
-<p>10000 Money - 14K</p>
+<div class="topup-box">
 
+<div class="topup-card">
+<h2>Money</h2>
+<p>5000 Money — 7K</p>
+<p>10000 Money — 14K</p>
+<p>20000 Money — 28K</p>
+</div>
+
+<div class="topup-card">
 <h2>Key</h2>
-<p>Basic Crate - 2K / key</p>
-<p>Legends - 4K / key</p>
-<p>Mythic - 7K / key</p>
+<p>Basic Crate — 2K / key</p>
+<p>Legends — 4K / key</p>
+<p>Mythic — 7K / key</p>
+</div>
+
+</div>
 
 <button onclick="backMenu()">Kembali</button>
 </section>
 
-<!-- SERIES -->
 <section id="series" class="hidden">
 <h1>Cursebane Oddesey</h1>
-<p>Server Survival RPG dengan Custom Enchant dan Dungeon menyeramkan.</p>
+<p>Server Survival RPG dengan Custom Enchant dan Dungeon menyeramkan.
+Dunia penuh misteri, boss, dan kekuatan terkutuk.</p>
 
 <p>Gabung Discord:</p>
-<a href="https://discord.gg/QurP4MvE" target="_blank">https://discord.gg/QurP4MvE</a>
+<a href="https://discord.gg/QurP4MvE" target="_blank">discord.gg/QurP4MvE</a>
 
 <button onclick="backMenu()">Kembali</button>
 </section>
 
-<!-- MYSTERY -->
 <div class="mystery" onclick="toggleMystery()">!</div>
 <div class="mystery-box" id="mysteryBox">
 <h3>Misteri</h3>
@@ -206,42 +287,28 @@ Mont berterima kasih kepada seluruh member dan support system yang telah meneman
 </div>
 
 <script>
-function enterSite(){
-document.getElementById("home").classList.add("hidden");
-document.getElementById("menu").classList.remove("hidden");
+
+function activateSection(id){
+document.querySelectorAll("section").forEach(sec=>{
+sec.classList.remove("active");
+sec.classList.add("hidden");
+});
+let target=document.getElementById(id);
+target.classList.remove("hidden");
+setTimeout(()=>target.classList.add("active"),50);
 }
 
-function showSejarah(){
-hideAll();
-document.getElementById("sejarah").classList.remove("hidden");
-}
-
-function showTopup(){
-hideAll();
-document.getElementById("topup").classList.remove("hidden");
-}
-
-function showSeries(){
-hideAll();
-document.getElementById("series").classList.remove("hidden");
-}
-
-function backMenu(){
-hideAll();
-document.getElementById("menu").classList.remove("hidden");
-}
-
-function hideAll(){
-document.getElementById("menu").classList.add("hidden");
-document.getElementById("sejarah").classList.add("hidden");
-document.getElementById("topup").classList.add("hidden");
-document.getElementById("series").classList.add("hidden");
-}
+function enterSite(){ activateSection("menu"); }
+function showSejarah(){ activateSection("sejarah"); }
+function showTopup(){ activateSection("topup"); }
+function showSeries(){ activateSection("series"); }
+function backMenu(){ activateSection("menu"); }
 
 function toggleMystery(){
 let box=document.getElementById("mysteryBox");
 box.style.display=box.style.display==="block"?"none":"block";
 }
+
 </script>
 
 </body>
