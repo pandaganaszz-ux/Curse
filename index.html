@@ -5,289 +5,364 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cursebane Odyssey | Official Website</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=VT323&family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=VT323&family=Crimson+Pro:ital,wght@0,300;0,600;1,400&display=swap" rel="stylesheet">
     <style>
         :root {
-            --mc-dark: #1a1a1a;
-            --mc-silver: #c0c0c0;
-            --mc-moss: #4a5d23;
-            --mc-horror-bg: #0a0a0d;
+            --deepslate-dark: #080a0f;
+            --deepslate-blue: #10141d;
+            --mc-silver: #f0f0f0;
+            --glow-cyan: #00f2ff;
+            --accent-red: #8b0000;
         }
 
         body {
-            background-color: var(--mc-horror-bg);
-            color: white;
-            font-family: 'Inter', sans-serif;
+            background-color: var(--deepslate-dark);
+            color: var(--mc-silver);
+            font-family: 'Crimson Pro', serif;
             overflow: hidden;
             margin: 0;
+            cursor: crosshair;
         }
 
         .minecraft-font { font-family: 'VT323', monospace; }
-        .ancient-font { font-family: 'Cinzel', serif; }
+        .ancient-font { font-family: 'Cinzel', serif; letter-spacing: 3px; }
 
-        /* Background dengan efek gelap dan lumut */
-        .bg-overlay {
+        /* Background Layering */
+        .bg-container {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: 
-                linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.9)),
-                url('https://images.unsplash.com/photo-1615412702130-94e8203f56ec?q=80&w=2071&auto=format&fit=crop'); /* Simulasi Hutan Gelap */
-            background-size: cover;
-            background-position: center;
-            z-index: -1;
+            z-index: -2;
+            overflow: hidden;
         }
 
-        /* Detail Lumut di pojok-pojok */
-        .moss-corner {
+        .bg-image {
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(rgba(8, 10, 15, 0.8), rgba(8, 10, 15, 0.98)),
+                        url('https://static.planetminecraft.com/files/resource_media/screenshot/14102641-deepslate.png');
+            background-size: 300px;
+            filter: contrast(1.4) brightness(0.4);
+            animation: deepslateDrift 60s infinite linear;
+        }
+
+        @keyframes deepslateDrift {
+            from { transform: translate(0, 0); }
+            to { transform: translate(-150px, -150px); }
+        }
+
+        /* Warden Pulse Effect */
+        .warden-glow {
             position: fixed;
-            width: 300px;
-            height: 300px;
+            bottom: -20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100vw;
+            height: 80vh;
+            background: radial-gradient(circle, rgba(0, 242, 255, 0.05) 0%, transparent 70%);
+            z-index: -1;
+            animation: pulse 8s infinite ease-in-out;
             pointer-events: none;
-            opacity: 0.4;
-            filter: grayscale(0.5) contrast(1.2);
-            z-index: 10;
         }
 
+        @keyframes pulse {
+            0%, 100% { opacity: 0.2; transform: translateX(-50%) scale(1); }
+            50% { opacity: 0.5; transform: translateX(-50%) scale(1.1); }
+        }
+
+        .vignette {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, transparent 10%, rgba(0,0,0,1) 100%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Slide Management */
         .slide {
             display: none;
             height: 100vh;
             width: 100%;
             padding: 2rem;
-            animation: fadeIn 0.8s ease-in-out forwards;
+            opacity: 0;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .active { display: flex; flex-direction: column; align-items: center; justify-content: center; }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .silver-text {
-            color: #b8b8b8;
-            text-shadow: 0 0 15px rgba(192, 192, 192, 0.4);
-        }
-
-        .glass-panel {
-            background: rgba(20, 20, 20, 0.85);
-            border: 2px solid var(--mc-moss);
-            box-shadow: 0 0 20px rgba(74, 93, 35, 0.3);
-            border-radius: 4px;
-            position: relative;
-            overflow-y: auto;
-            max-height: 80vh;
-        }
-
-        .btn-curse {
-            background: #2a2a2a;
-            border-bottom: 4px solid #000;
-            transition: all 0.2s;
-            cursor: pointer;
-        }
-
-        .btn-curse:hover {
-            background: var(--mc-moss);
-            transform: scale(1.05);
-        }
-
-        /* Scrollbar ala Minecraft */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #1a1a1a; }
-        ::-webkit-scrollbar-thumb { background: var(--mc-moss); }
-
-        .mistery-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: black;
-            display: none;
-            z-index: 100;
+        .slide.active {
+            display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
+            opacity: 1;
+            animation: slideReveal 1.2s forwards;
         }
+
+        @keyframes slideReveal {
+            from { filter: blur(30px); opacity: 0; transform: scale(1.05); }
+            to { filter: blur(0); opacity: 1; transform: scale(1); }
+        }
+
+        /* UI Cards */
+        .glass-panel {
+            background: rgba(16, 20, 29, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 30px 100px rgba(0,0,0,0.8);
+            transition: all 0.5s ease;
+        }
+
+        .nav-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            background: linear-gradient(135deg, rgba(255,255,255,0.02) 0%, rgba(0,0,0,0) 100%);
+        }
+
+        .nav-card:hover {
+            border-color: var(--glow-cyan);
+            transform: translateY(-10px);
+            background: rgba(0, 242, 255, 0.03);
+        }
+
+        .nav-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 242, 255, 0.05), transparent);
+            transition: 0.5s;
+        }
+
+        .nav-card:hover::before {
+            left: 100%;
+        }
+
+        .silver-text {
+            background: linear-gradient(to bottom, #fff 30%, #4a5568 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            position: relative;
+            padding: 1.5rem 4rem;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.1);
+            color: white;
+            transition: 0.5s;
+            overflow: hidden;
+        }
+
+        .btn-primary:hover {
+            background: white;
+            color: black;
+            box-shadow: 0 0 40px rgba(255,255,255,0.2);
+        }
+
+        /* Custom Scroll */
+        .custom-scroll::-webkit-scrollbar { width: 4px; }
+        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: var(--glow-cyan); border-radius: 10px; }
+
     </style>
 </head>
 <body>
 
-    <div class="bg-overlay"></div>
-    
-    <!-- Moss Textures -->
-    <div class="moss-corner top-0 left-0" style="background: radial-gradient(circle at top left, #4a5d23 0%, transparent 70%);"></div>
-    <div class="moss-corner bottom-0 right-0" style="background: radial-gradient(circle at bottom right, #4a5d23 0%, transparent 70%);"></div>
+    <div class="bg-container">
+        <div class="bg-image"></div>
+        <div class="warden-glow"></div>
+        <div class="vignette"></div>
+    </div>
 
-    <!-- SLIDE 1: LANDING -->
+    <!-- SLIDE 1: HOME -->
     <div id="slide1" class="slide active">
-        <h1 class="ancient-font text-6xl md:text-8xl silver-text mb-4 text-center">Welcome To Cursebane</h1>
-        <p class="minecraft-font text-2xl text-gray-400 text-center max-w-2xl px-4">
-            Official website for the Curse Community. A realm where legends thrive and stories end in shadows.
-        </p>
-        <div class="fixed bottom-10 right-10">
-            <button onclick="changeSlide(2)" class="minecraft-font text-4xl hover:text-green-500 transition-colors duration-300">
-                ENTER &gt;
+        <div class="text-center max-w-4xl">
+            <h1 class="ancient-font text-8xl md:text-[10rem] font-black silver-text mb-4 tracking-tighter">
+                CURSEBANE
+            </h1>
+            <div class="h-1 w-24 bg-cyan-500 mx-auto mb-10 opacity-50"></div>
+            <p class="minecraft-font text-2xl md:text-3xl text-cyan-800 tracking-[0.8em] uppercase mb-20">
+                The Odyssey Awaits
+            </p>
+            
+            <button onclick="changeSlide(2)" class="btn-primary minecraft-font text-4xl group">
+                <span class="relative z-10">MULA PETUALANGAN</span>
             </button>
         </div>
     </div>
 
-    <!-- SLIDE 2: MAIN MENU -->
+    <!-- SLIDE 2: HUB -->
     <div id="slide2" class="slide">
-        <h2 class="ancient-font text-4xl mb-12 silver-text">PILIH TAKDIRMU</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-5xl">
-            <div onclick="showContent('sejarah')" class="btn-curse p-8 text-center glass-panel flex flex-col items-center group">
-                <span class="minecraft-font text-4xl mb-4 group-hover:text-green-400">📜 Sejarah Curse</span>
-                <p class="text-sm text-gray-400">Menelusuri jejak kaki Sang Owner dari awal mula hingga akhir.</p>
+        <div class="w-full max-w-7xl px-6">
+            <div class="flex justify-between items-end mb-16 border-b border-white/5 pb-8">
+                <div>
+                    <h2 class="ancient-font text-4xl silver-text">MAIN HUB</h2>
+                    <p class="minecraft-font text-cyan-900 tracking-widest uppercase text-sm mt-2">Pilih Destinasi Anda</p>
+                </div>
+                <div class="minecraft-font text-gray-700 text-xl hidden md:block">
+                    CO: 2023 - 2026 // END OF AN ERA
+                </div>
             </div>
-            <div onclick="showContent('topup')" class="btn-curse p-8 text-center glass-panel flex flex-col items-center group">
-                <span class="minecraft-font text-4xl mb-4 group-hover:text-green-400">💎 Cursebane Top Up</span>
-                <p class="text-sm text-gray-400">Dukungan finansial untuk menjaga komunitas tetap bernapas.</p>
-            </div>
-            <div onclick="showContent('series')" class="btn-curse p-8 text-center glass-panel flex flex-col items-center group">
-                <span class="minecraft-font text-4xl mb-4 group-hover:text-green-400">⚔️ Series Hadir</span>
-                <p class="text-sm text-gray-400">Informasi server yang sedang berjalan saat ini.</p>
-            </div>
-        </div>
-        <button onclick="changeSlide(1)" class="mt-12 text-gray-500 hover:text-white">&larr; Kembali</button>
-    </div>
 
-    <!-- MODAL CONTENT: SEJARAH -->
-    <div id="modal-sejarah" class="slide">
-        <div class="glass-panel p-8 md:p-12 max-w-4xl w-full">
-            <h2 class="ancient-font text-4xl mb-6 silver-text border-b border-gray-700 pb-2">THE LEGACY OF CURSE (2023 - 2026)</h2>
-            <div class="text-gray-300 space-y-4 leading-relaxed overflow-y-auto pr-4" style="max-height: 50vh;">
-                <p>Awal mula <strong>Curse</strong> didirikan pada Februari 2023 dengan nama <em>Curse Vanilla MCPE</em>. Sebuah server bertema vanilla sederhana yang berjalan hingga Mei. Server ini didirikan oleh seseorang bernama <strong>Montxyx</strong>. Mengapa namanya Montxyx? Semua berawal saat Mont membuat nickname Minecraft secara asal karena sifatnya yang memang tergolong unik.</p>
-                
-                <p>Pada series kedua, ia mulai dikenal sebagai Mont, owner dari server <strong>COLTK (Curse of the Legend Key)</strong>. Server ini mengusung tema BHC dengan custom enchant level tinggi, berdiri sejak Desember 2023 hingga Maret 2024. Di sinilah Mont mulai membuat series sendiri di Java Edition dan bertemu sosok berjasa dalam hidupnya: <strong>Epan</strong>.</p>
-                
-                <p>Setelah melewati berbagai fase, dari server <em>Last Warrior</em> hingga bertemu kawan setia seperti <strong>Sanopalz</strong> dan <strong>Zensuan</strong>, Mont banyak belajar tentang manajemen server. Lahirlah <strong>CFL (Cursefury Legends)</strong>, series yang berjalan mulus di mana ia merekrut <strong>Rexdzio (Ziorex)</strong>, sosok yang selalu menemani saat kesepian. Ada pula <strong>Ahmad (paksamsul7)</strong> dan <strong>Latif</strong> yang setia memberikan dukungan penuh.</p>
-                
-                <p>Tiga tahun telah berlalu (2023-2026). Kini, Mont memutuskan membuat series terakhirnya: <strong>Cursebane Odyssey</strong>. Bertema Survival RPG dengan custom enchant yang luar biasa, server ini adalah penutup sekaligus penghormatan bagi komunitas Curse.</p>
-                
-                <p class="italic text-green-400">"Aku, Mont, sangat berterimakasih kepada kalian semua. Aku tidak bisa membalas kebaikan kalian. Semoga ke depan kita semua menjadi yang terbaik. Aku pamit, kecuali untuk si pencuri asset. Bye."</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Card 1 -->
+                <div onclick="showContent('sejarah')" class="nav-card glass-panel p-10 cursor-pointer group h-[400px] flex flex-col justify-end">
+                    <div class="absolute top-10 right-10 text-6xl opacity-10 group-hover:opacity-100 transition-all duration-700">📜</div>
+                    <div class="relative z-10">
+                        <span class="minecraft-font text-cyan-600 text-sm mb-2 block tracking-widest">ARCHIVE</span>
+                        <h3 class="minecraft-font text-5xl mb-4 group-hover:text-cyan-400 transition-colors">SEJARAH</h3>
+                        <p class="text-gray-500 text-sm leading-relaxed">Melihat kembali jejak kaki yang terkubur dalam debu masa lalu sejak 2023.</p>
+                    </div>
+                </div>
 
-                <div class="mt-8 border-t border-gray-700 pt-6">
-                    <h3 class="minecraft-font text-3xl mb-4 text-green-500">LIST OF LEGENDS</h3>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                        <div class="bg-black/50 p-2 border-l-2 border-red-500"><strong>OWNER:</strong> Mont</div>
-                        <div class="bg-black/50 p-2 border-l-2 border-blue-500"><strong>ADMIN:</strong> Xeons</div>
-                        <div class="bg-black/50 p-2 border-l-2 border-blue-500"><strong>ADMIN:</strong> Rama</div>
-                        <div class="bg-black/50 p-2 border-l-2 border-blue-500"><strong>ADMIN:</strong> Sanopalz</div>
-                        <div class="bg-black/50 p-2 border-l-2 border-purple-500"><strong>ANIMATOR:</strong> Rossy</div>
-                        <div class="bg-black/50 p-2 border-l-2 border-yellow-500"><strong>DONATUR:</strong> Ahmad</div>
-                        <div class="bg-black/50 p-2 border-l-2 border-green-500"><strong>SUPPORT:</strong> Epan</div>
-                        <div class="bg-black/50 p-2 border-l-2 border-pink-500"><strong>STREAMER:</strong> Zuanmc</div>
-                        <div class="bg-black/50 p-2 border-l-2 border-pink-500"><strong>STREAMER:</strong> Inderaa</div>
-                        <div class="bg-black/50 p-2 border-l-2 border-pink-500"><strong>STREAMER:</strong> Shade</div>
-                        <div class="bg-black/50 p-2 border-l-2 border-pink-500"><strong>STREAMER:</strong> Ajeul</div>
-                        <div class="bg-black/50 p-2 border-l-2 border-pink-500"><strong>STREAMER:</strong> Latif</div>
-                        <div class="bg-black/50 p-2 border-l-2 border-cyan-500"><strong>PREMIUM:</strong> Riju</div>
-                        <div class="bg-black/50 p-2 border-l-2 border-cyan-500"><strong>PREMIUM:</strong> APIP</div>
-                        <div class="bg-black/50 p-2 border-l-2 border-gray-500"><strong>MEMBER:</strong> Kelpin</div>
-                        <div class="bg-black/50 p-2 border-l-2 border-gray-500"><strong>MEMBER:</strong> Ziorex</div>
-                        <div class="bg-black/50 p-2 border-l-2 border-gray-500"><strong>MEMBER:</strong> Vinoxkal</div>
-                        <div class="bg-black/50 p-2 border-l-2 border-gray-500"><strong>MEMBER:</strong> Eko</div>
-                        <div class="bg-black/50 p-2 border-l-2 border-gray-500"><strong>MEMBER:</strong> Hartana</div>
-                        <div class="bg-black/50 p-2 border-l-2 border-gray-500"><strong>MEMBER:</strong> Zensuan</div>
+                <!-- Card 2 -->
+                <div onclick="showContent('topup')" class="nav-card glass-panel p-10 cursor-pointer group h-[400px] flex flex-col justify-end">
+                    <div class="absolute top-10 right-10 text-6xl opacity-10 group-hover:opacity-100 transition-all duration-700">💎</div>
+                    <div class="relative z-10">
+                        <span class="minecraft-font text-cyan-600 text-sm mb-2 block tracking-widest">TREASURY</span>
+                        <h3 class="minecraft-font text-5xl mb-4 group-hover:text-cyan-400 transition-colors">TOP UP</h3>
+                        <p class="text-gray-500 text-sm leading-relaxed">Tukarkan emas anda untuk peralatan dan perlindungan di kedalaman goa.</p>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div onclick="showContent('series')" class="nav-card glass-panel p-10 cursor-pointer group h-[400px] flex flex-col justify-end">
+                    <div class="absolute top-10 right-10 text-6xl opacity-10 group-hover:opacity-100 transition-all duration-700">⚔️</div>
+                    <div class="relative z-10">
+                        <span class="minecraft-font text-cyan-600 text-sm mb-2 block tracking-widest">BATTLEFIELD</span>
+                        <h3 class="minecraft-font text-5xl mb-4 group-hover:text-cyan-400 transition-colors">SERIES</h3>
+                        <p class="text-gray-500 text-sm leading-relaxed">Puncak dari segala tantangan. Persiapkan dirimu untuk Odyssey terakhir.</p>
                     </div>
                 </div>
             </div>
-            <button onclick="changeSlide(2)" class="mt-8 btn-curse px-6 py-2 minecraft-font text-xl">TUTUP</button>
+
+            <div class="mt-16 text-center">
+                <button onclick="changeSlide(1)" class="minecraft-font text-xl text-gray-700 hover:text-white transition-all">KELUAR DARI HUB</button>
+            </div>
         </div>
     </div>
 
-    <!-- MODAL CONTENT: TOPUP -->
+    <!-- MODAL: SEJARAH -->
+    <div id="modal-sejarah" class="slide">
+        <div class="glass-panel p-8 md:p-20 max-w-6xl w-full flex flex-col md:flex-row gap-16">
+            <div class="md:w-1/3">
+                <h2 class="ancient-font text-5xl silver-text mb-6">RIWAYAT<br>KUTUKAN</h2>
+                <div class="h-1 w-20 bg-cyan-900 mb-8"></div>
+                <div class="space-y-4 minecraft-font text-xl">
+                    <div class="flex items-center gap-4 text-cyan-800"><span class="w-2 h-2 bg-cyan-800 rounded-full"></span> 2023: Genesis</div>
+                    <div class="flex items-center gap-4 text-cyan-800"><span class="w-2 h-2 bg-cyan-800 rounded-full"></span> 2024: The Rise</div>
+                    <div class="flex items-center gap-4 text-cyan-800"><span class="w-2 h-2 bg-cyan-800 rounded-full"></span> 2026: The Fall</div>
+                </div>
+            </div>
+            
+            <div class="md:w-2/3 overflow-y-auto pr-8 custom-scroll max-h-[60vh] text-gray-400 text-lg leading-relaxed">
+                <p class="mb-6">Kisah ini berakar pada <strong>Februari 2023</strong>. Lahir sebagai <strong>Curse Vanilla MCPE</strong>. Walau hanya bertahan sekejap, ia meninggalkan gema yang tak bisa dilupakan.</p>
+                <p class="mb-6"><strong>Montxyx</strong>, sang arsitek tunggal, membawa visi ini melampaui batas. Di <strong>Desember 2023</strong>, ia berevolusi menjadi <strong>COLTK</strong>, titik balik petualangan sesungguhnya.</p>
+                <p class="mb-6">Melalui bimbingan teknis <strong>Sanopalz</strong> dan dedikasi <strong>Zensuan</strong>, infrastruktur server ini berdiri kokoh layaknya Deepslate.</p>
+                <div class="p-8 bg-black/40 border-l-2 border-cyan-500/20 italic mb-10">
+                    "Cursebane Odyssey adalah lagu penutup. Sebuah perpisahan yang manis untuk komunitas yang luar biasa ini."
+                </div>
+                
+                <h3 class="ancient-font text-2xl text-cyan-800 mb-8 tracking-[0.4em]">HALL OF LEGENDS</h3>
+                <div class="grid grid-cols-2 gap-4 text-sm font-mono">
+                    <div class="p-4 border border-white/5">FOUNDER: MONT</div>
+                    <div class="p-4 border border-white/5">COUNCIL: XEONS, RAMA, SANOPALZ</div>
+                    <div class="p-4 border border-white/5">CREATOR: ROSSY</div>
+                    <div class="p-4 border border-white/5">HERALD: EPAN</div>
+                </div>
+                
+                <button onclick="changeSlide(2)" class="mt-12 w-full py-4 border border-gray-800 minecraft-font text-2xl hover:bg-white hover:text-black transition-all">KEMBALI KE HUB</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: TOPUP -->
     <div id="modal-topup" class="slide">
-        <div class="glass-panel p-8 max-w-2xl w-full">
-            <h2 class="ancient-font text-4xl mb-6 silver-text text-center">TOP UP CURSEBANE</h2>
-            <div class="flex gap-4 mb-8">
-                <button onclick="toggleTopup('money')" id="tab-money" class="flex-1 p-3 bg-green-900 border-2 border-green-400 minecraft-font text-2xl">MONEY</button>
-                <button onclick="toggleTopup('key')" id="tab-key" class="flex-1 p-3 bg-gray-800 border-2 border-transparent minecraft-font text-2xl">KEY</button>
+        <div class="glass-panel p-12 max-w-4xl w-full">
+            <h2 class="ancient-font text-4xl mb-12 text-center silver-text">PERTUKARAN EMAS</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div class="space-y-4">
+                    <h3 class="minecraft-font text-2xl text-cyan-900 border-b border-white/5 pb-2 uppercase">Purchase Coins</h3>
+                    <div class="custom-scroll overflow-y-auto max-h-[40vh] space-y-4 pr-2">
+                        <div class="p-6 bg-white/5 border border-white/5 flex justify-between hover:border-cyan-500 cursor-pointer transition-all">
+                            <span class="minecraft-font text-3xl">5.000 Money</span>
+                            <span class="text-cyan-500">IDR 7K</span>
+                        </div>
+                        <div class="p-6 bg-white/5 border border-white/5 flex justify-between hover:border-cyan-500 cursor-pointer transition-all">
+                            <span class="minecraft-font text-3xl">10.000 Money</span>
+                            <span class="text-cyan-500">IDR 14K</span>
+                        </div>
+                        <div class="p-6 bg-white/5 border border-white/5 flex justify-between hover:border-cyan-500 cursor-pointer transition-all">
+                            <span class="minecraft-font text-3xl">15.000 Money</span>
+                            <span class="text-cyan-500">IDR 21K</span>
+                        </div>
+                        <div class="p-6 bg-white/5 border border-white/5 flex justify-between hover:border-cyan-500 cursor-pointer transition-all">
+                            <span class="minecraft-font text-3xl">20.000 Money</span>
+                            <span class="text-cyan-500">IDR 28K</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="space-y-4">
+                    <h3 class="minecraft-font text-2xl text-cyan-900 border-b border-white/5 pb-2 uppercase">Crate Keys</h3>
+                    <div class="space-y-4">
+                        <div class="p-6 bg-white/5 border border-white/5 flex justify-between hover:border-yellow-500 cursor-pointer transition-all">
+                            <span class="minecraft-font text-3xl">LEGEND KEY</span>
+                            <span class="text-yellow-500">IDR 4K</span>
+                        </div>
+                        <div class="p-6 bg-white/5 border border-white/5 flex justify-between hover:border-red-500 cursor-pointer transition-all">
+                            <span class="minecraft-font text-3xl">MYTHIC KEY</span>
+                            <span class="text-red-500">IDR 7K</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-
-            <div id="content-money" class="space-y-4">
-                <div class="flex justify-between p-4 bg-black/40 border border-gray-700"><span>5.000 Money</span> <span class="text-green-400">Rp 7.000</span></div>
-                <div class="flex justify-between p-4 bg-black/40 border border-gray-700"><span>10.000 Money</span> <span class="text-green-400">Rp 14.000</span></div>
-                <div class="flex justify-between p-4 bg-black/40 border border-gray-700"><span>15.000 Money</span> <span class="text-green-400">Rp 21.000</span></div>
-                <p class="text-xs text-center text-gray-500 mt-4 italic">Hubungi admin untuk kelipatan lainnya.</p>
+            <div class="mt-12 text-center">
+                <button onclick="changeSlide(2)" class="minecraft-font text-xl text-gray-700 hover:text-white uppercase tracking-widest">Batal</button>
             </div>
-
-            <div id="content-key" class="space-y-4 hidden">
-                <div class="flex justify-between p-4 bg-black/40 border border-gray-700"><span>Basic Crate</span> <span class="text-yellow-400">2k / key</span></div>
-                <div class="flex justify-between p-4 bg-black/40 border border-gray-700"><span>Legends Crate</span> <span class="text-yellow-400">4k / key</span></div>
-                <div class="flex justify-between p-4 bg-black/40 border border-gray-700"><span>Mythic Crate</span> <span class="text-yellow-400">7k / key</span></div>
-            </div>
-
-            <button onclick="changeSlide(2)" class="mt-8 w-full btn-curse py-2 minecraft-font text-xl">KEMBALI</button>
         </div>
     </div>
 
-    <!-- MODAL CONTENT: SERIES -->
+    <!-- MODAL: SERIES -->
     <div id="modal-series" class="slide">
-        <div class="glass-panel p-12 max-w-2xl w-full text-center">
-            <h2 class="ancient-font text-5xl mb-4 silver-text">CURSEBANE ODDESEY</h2>
-            <p class="text-gray-400 mb-8 italic">
-                Survival RPG - Custom Enchant - Dangerous Dungeons
+        <div class="glass-panel p-20 max-w-3xl w-full text-center">
+            <div class="text-8xl mb-8">🌌</div>
+            <h2 class="ancient-font text-6xl silver-text mb-6">ODYSSEY</h2>
+            <p class="text-gray-500 text-xl leading-relaxed mb-12 italic">
+                Survival RPG dengan mekanik paling mendalam yang pernah kami ciptakan. Tantangan terakhir sebelum tirai ditutup.
             </p>
-            <p class="mb-8">Server ini adalah puncak dari perjalanan Curse Community. Rasakan petualangan sejati dengan fitur-fitur yang belum pernah ada sebelumnya.</p>
-            
-            <a href="https://discord.gg/QurP4MvE" target="_blank" class="block w-full btn-curse py-4 minecraft-font text-3xl text-blue-400 mb-6">
-                JOIN DISCORD &gt;
+            <a href="https://discord.gg/QurP4MvE" target="_blank" class="btn-primary block w-full minecraft-font text-4xl mb-6">
+                GABUNG DISCORD
             </a>
-            
-            <button onclick="changeSlide(2)" class="text-gray-500 hover:text-white">Kembali ke Menu</button>
+            <button onclick="changeSlide(2)" class="minecraft-font text-xl text-gray-700 hover:text-white uppercase tracking-widest">KEMBALI</button>
         </div>
-    </div>
-
-    <!-- MISTERY BUTTON -->
-    <div class="fixed bottom-4 right-4 z-50">
-        <button onclick="openMistery()" class="bg-black text-white w-10 h-10 rounded-full border border-gray-800 flex items-center justify-center hover:bg-red-900 transition-colors">!</button>
-    </div>
-
-    <!-- MISTERY OVERLAY -->
-    <div id="mistery" class="mistery-overlay" onclick="closeMistery()">
-        <h2 class="ancient-font text-6xl text-white mb-4">MISTERI</h2>
-        <p class="minecraft-font text-3xl text-gray-600">COMING SOON</p>
-        <p class="mt-20 text-xs text-gray-800 italic">Klik di mana saja untuk kembali...</p>
     </div>
 
     <script>
         function changeSlide(id) {
             const slides = document.querySelectorAll('.slide');
-            slides.forEach(s => s.classList.remove('active'));
-            document.getElementById('slide' + id).classList.add('active');
+            slides.forEach(s => {
+                s.style.opacity = '0';
+                setTimeout(() => s.classList.remove('active'), 400);
+            });
+            
+            setTimeout(() => {
+                const target = document.getElementById('slide' + id) || document.getElementById('modal-' + id);
+                if(target) target.classList.add('active');
+            }, 500);
         }
 
         function showContent(type) {
-            const slides = document.querySelectorAll('.slide');
-            slides.forEach(s => s.classList.remove('active'));
-            document.getElementById('modal-' + type).classList.add('active');
+            changeSlide(type);
         }
 
-        function toggleTopup(mode) {
-            const moneyBtn = document.getElementById('tab-money');
-            const keyBtn = document.getElementById('tab-key');
-            const moneyContent = document.getElementById('content-money');
-            const keyContent = document.getElementById('content-key');
-
-            if(mode === 'money') {
-                moneyContent.classList.remove('hidden');
-                keyContent.classList.add('hidden');
-                moneyBtn.style.backgroundColor = '#4a5d23';
-                keyBtn.style.backgroundColor = '#1a1a1a';
-            } else {
-                moneyContent.classList.add('hidden');
-                keyContent.classList.remove('hidden');
-                keyBtn.style.backgroundColor = '#4a5d23';
-                moneyBtn.style.backgroundColor = '#1a1a1a';
-            }
-        }
-
-        function openMistery() {
-            document.getElementById('mistery').style.display = 'flex';
-        }
-
-        function closeMistery() {
-            document.getElementById('mistery').style.display = 'none';
-        }
+        document.addEventListener('mousemove', (e) => {
+            const glow = document.querySelector('.warden-glow');
+            const x = (e.clientX / window.innerWidth - 0.5) * 20;
+            const y = (e.clientY / window.innerHeight - 0.5) * 20;
+            glow.style.transform = `translateX(calc(-50% + ${x}px)) translateY(${y}px)`;
+        });
     </script>
+
 </body>
 </html>
