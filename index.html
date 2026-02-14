@@ -4,311 +4,634 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cursebane Community</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Orbitron:wght@500&display=swap" rel="stylesheet">
-
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 <style>
+    :root {
+        --primary: #e0e0e0;
+        --accent: #8a0000; /* Dark Red for Curse vibe */
+        --glass: rgba(20, 20, 20, 0.6);
+        --border: rgba(255, 255, 255, 0.1);
+        --glow: rgba(255, 255, 255, 0.3);
+    }
 
-body{
-margin:0;
-background: radial-gradient(circle at center, #1a1a1a 0%, #0a0a0a 60%, #000 100%);
-color:#ccc;
-font-family:'Cinzel',serif;
-overflow-x:hidden;
-scroll-behavior:smooth;
-}
+    * {
+        cursor: none !important; /* HIDE DEFAULT CURSOR EVERYWHERE */
+        box-sizing: border-box;
+    }
 
-section{
-min-height:100vh;
-display:flex;
-flex-direction:column;
-justify-content:center;
-align-items:center;
-padding:60px 20px;
-text-align:center;
-opacity:0;
-transform:translateY(30px);
-transition:1s ease;
-}
+    body {
+        margin: 0;
+        background-color: #050505;
+        background-image: 
+            radial-gradient(circle at 50% 50%, #1a1a1a 0%, #000 100%);
+        color: var(--primary);
+        font-family: 'Cinzel', serif;
+        overflow-x: hidden;
+        min-height: 100vh;
+        font-weight: 400;
+    }
 
-section.active{
-opacity:1;
-transform:translateY(0);
-}
+    /* CUSTOM CURSOR */
+    #cursor-dot,
+    #cursor-outline {
+        position: fixed;
+        top: 0;
+        left: 0;
+        transform: translate(-50%, -50%);
+        border-radius: 50%;
+        z-index: 9999;
+        pointer-events: none;
+    }
 
-h1{
-font-size:55px;
-color:#c0c0c0;
-text-shadow:0 0 20px #888, 0 0 40px #444;
-letter-spacing:3px;
-}
+    #cursor-dot {
+        width: 8px;
+        height: 8px;
+        background-color: white;
+        box-shadow: 0 0 10px white;
+    }
 
-h2{
-color:#aaa;
-margin-top:30px;
-}
+    #cursor-outline {
+        width: 40px;
+        height: 40px;
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        transition: width 0.2s, height 0.2s, background-color 0.2s, border-color 0.2s;
+    }
 
-p{
-max-width:900px;
-line-height:1.8;
-font-size:17px;
-}
+    /* Hover state for cursor */
+    body.hovering #cursor-outline {
+        width: 70px;
+        height: 70px;
+        background-color: rgba(255, 255, 255, 0.1);
+        border-color: transparent;
+        backdrop-filter: blur(2px);
+    }
 
-button{
-padding:12px 28px;
-background:transparent;
-border:2px solid #555;
-color:#ccc;
-font-family:'Orbitron',sans-serif;
-cursor:pointer;
-margin:12px;
-transition:0.4s;
-letter-spacing:1px;
-}
+    /* Scrollbar Styling */
+    ::-webkit-scrollbar {
+        width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+        background: #000;
+    }
+    ::-webkit-scrollbar-thumb {
+        background: #333;
+        border-radius: 3px;
+    }
 
-button:hover{
-background:#c0c0c0;
-color:black;
-box-shadow:0 0 20px silver;
-}
+    /* Particles Background */
+    .particles {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: -1;
+        overflow: hidden;
+    }
+    .particle {
+        position: absolute;
+        width: 2px;
+        height: 2px;
+        background: rgba(255,255,255,0.3);
+        border-radius: 50%;
+        animation: floatUp 10s linear infinite;
+    }
+    @keyframes floatUp {
+        0% { transform: translateY(100vh) scale(0); opacity: 0; }
+        50% { opacity: 0.8; }
+        100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
+    }
 
-.hidden{display:none;}
+    /* Layout & Sections */
+    section {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 60px 20px;
+        text-align: center;
+        opacity: 0;
+        transform: scale(0.95) translateY(20px);
+        transition: opacity 0.8s cubic-bezier(0.23, 1, 0.32, 1), 
+                    transform 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+        position: absolute;
+        width: 100%;
+        top: 0;
+        pointer-events: none;
+        filter: blur(10px);
+    }
 
-.menu-box{
-display:flex;
-gap:30px;
-flex-wrap:wrap;
-justify-content:center;
-margin-top:40px;
-}
+    section.active {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+        position: relative;
+        pointer-events: all;
+        filter: blur(0);
+    }
 
-.menu-btn{
-width:220px;
-padding:18px;
-border:2px solid #444;
-background:#111;
-transition:0.4s;
-}
+    section.hidden {
+        display: none;
+    }
 
-.menu-btn:hover{
-background:#1a1a1a;
-border-color:silver;
-box-shadow:0 0 25px #888;
-}
+    /* Typography */
+    h1 {
+        font-size: clamp(40px, 6vw, 70px);
+        color: #fff;
+        text-transform: uppercase;
+        letter-spacing: 8px;
+        margin-bottom: 30px;
+        background: linear-gradient(to bottom, #fff 0%, #888 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        filter: drop-shadow(0 0 20px rgba(255,255,255,0.2));
+    }
 
-.member-list{
-background:#0d0d0d;
-padding:30px;
-border:1px solid #333;
-margin-top:40px;
-width:100%;
-max-width:800px;
-text-align:left;
-}
+    h2 {
+        color: #ddd;
+        margin-top: 30px;
+        font-size: 1.8rem;
+        letter-spacing: 4px;
+        position: relative;
+        display: inline-block;
+        padding-bottom: 15px;
+    }
+    
+    h2::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, #fff, transparent);
+    }
 
-.member-list li{
-margin:6px 0;
-}
+    p {
+        max-width: 800px;
+        line-height: 2;
+        font-size: 16px;
+        color: #aaa;
+        margin-bottom: 30px;
+        font-family: 'Orbitron', sans-serif;
+        font-weight: 300;
+        letter-spacing: 1px;
+    }
 
-.topup-box{
-display:flex;
-gap:40px;
-flex-wrap:wrap;
-justify-content:center;
-margin-top:30px;
-}
+    /* Buttons */
+    button {
+        padding: 16px 40px;
+        background: transparent;
+        border: 1px solid var(--border);
+        color: #fff;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 14px;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        position: relative;
+        overflow: hidden;
+        transition: 0.4s;
+        backdrop-filter: blur(5px);
+        box-shadow: 0 0 0 rgba(255,255,255,0);
+        margin: 15px;
+    }
 
-.topup-card{
-background:#111;
-padding:25px;
-border:1px solid #333;
-width:260px;
-transition:0.4s;
-}
+    button::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        transition: 0.5s;
+    }
 
-.topup-card:hover{
-border-color:silver;
-box-shadow:0 0 20px #777;
-}
+    button:hover {
+        border-color: rgba(255,255,255,0.6);
+        box-shadow: 0 0 30px rgba(255,255,255,0.1);
+        text-shadow: 0 0 10px white;
+        transform: translateY(-2px);
+    }
 
-a{
-color:#c0c0c0;
-text-decoration:none;
-}
+    button:hover::before {
+        left: 100%;
+    }
 
-a:hover{
-text-shadow:0 0 10px silver;
-}
+    /* Menu & Cards - Glassmorphism */
+    .menu-box {
+        display: flex;
+        gap: 30px;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-top: 50px;
+        max-width: 1200px;
+    }
 
-.mystery{
-position:fixed;
-bottom:20px;
-right:20px;
-background:black;
-color:white;
-width:45px;
-height:45px;
-display:flex;
-align-items:center;
-justify-content:center;
-font-weight:bold;
-cursor:pointer;
-border:1px solid #444;
-transition:0.3s;
-}
+    .menu-btn {
+        width: 260px;
+        padding: 30px;
+        background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.4) 100%);
+        border: 1px solid var(--border);
+        backdrop-filter: blur(10px);
+        transition: 0.4s ease-out;
+    }
 
-.mystery:hover{
-box-shadow:0 0 20px silver;
-}
+    .menu-btn:hover {
+        background: rgba(255,255,255,0.08);
+        border-color: rgba(255,255,255,0.4);
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+    }
 
-.mystery-box{
-position:fixed;
-bottom:80px;
-right:20px;
-background:black;
-color:white;
-padding:20px;
-display:none;
-border:1px solid #444;
-}
+    .member-list {
+        background: linear-gradient(180deg, rgba(20,20,20,0.8) 0%, rgba(10,10,10,0.95) 100%);
+        padding: 40px;
+        border: 1px solid var(--border);
+        border-top: 1px solid rgba(255,255,255,0.2);
+        margin-top: 50px;
+        width: 100%;
+        max-width: 700px;
+        text-align: left;
+        box-shadow: 0 0 50px rgba(0,0,0,0.5);
+        backdrop-filter: blur(20px);
+        position: relative;
+    }
+    
+    .member-list::before {
+        content:''; position: absolute; top:0; left:0; width:100%; height:1px;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+    }
 
-.fade-bg{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:linear-gradient(180deg, rgba(0,0,0,0.7), rgba(0,0,0,0.9));
-pointer-events:none;
-z-index:-1;
-}
+    .member-list ul {
+        list-style: none;
+        padding: 0;
+    }
 
+    .member-list li {
+        margin: 15px 0;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+        padding-bottom: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: 0.3s;
+    }
+    
+    .member-list li:hover {
+        padding-left: 10px;
+        border-bottom-color: rgba(255,255,255,0.2);
+    }
+    
+    .member-list li b {
+        color: #fff;
+        font-family: 'Cinzel', serif;
+        font-size: 1.1em;
+        text-shadow: 0 0 10px rgba(255,255,255,0.3);
+    }
+
+    .topup-box {
+        display: flex;
+        gap: 40px;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-top: 50px;
+    }
+
+    .topup-card {
+        background: rgba(255,255,255,0.03);
+        padding: 40px 20px;
+        border: 1px solid var(--border);
+        width: 280px;
+        transition: 0.5s;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .topup-card::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, #fff, transparent);
+        transform: scaleX(0);
+        transition: 0.5s;
+    }
+
+    .topup-card:hover {
+        transform: translateY(-10px);
+        background: rgba(255,255,255,0.06);
+        box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    }
+
+    .topup-card:hover::after {
+        transform: scaleX(1);
+    }
+
+    .discord-link {
+        color: #7289da;
+        text-decoration: none;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 1.2rem;
+        border: 1px solid rgba(114, 137, 218, 0.3);
+        padding: 15px 30px;
+        transition: 0.3s;
+        display: inline-block;
+        margin-top: 20px;
+        background: rgba(114, 137, 218, 0.05);
+        letter-spacing: 2px;
+    }
+
+    .discord-link:hover {
+        background: rgba(114, 137, 218, 0.2);
+        color: white;
+        box-shadow: 0 0 30px rgba(114, 137, 218, 0.4);
+        border-color: #7289da;
+    }
+
+    .mystery {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        width: 60px;
+        height: 60px;
+        background: rgba(0,0,0,0.8);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        border: 1px solid rgba(255,255,255,0.2);
+        border-radius: 50%;
+        transition: 0.5s;
+        z-index: 100;
+        font-family: 'Orbitron', sans-serif;
+        backdrop-filter: blur(5px);
+    }
+
+    .mystery:hover {
+        box-shadow: 0 0 30px rgba(255,255,255,0.4);
+        border-color: white;
+        transform: rotate(180deg);
+    }
+
+    .mystery-box {
+        position: fixed;
+        bottom: 100px;
+        right: 30px;
+        background: rgba(10, 10, 10, 0.95);
+        color: white;
+        padding: 30px;
+        display: none;
+        border: 1px solid rgba(255,255,255,0.2);
+        z-index: 99;
+        min-width: 250px;
+        box-shadow: 0 0 50px rgba(0,0,0,0.8);
+        backdrop-filter: blur(20px);
+        transform-origin: bottom right;
+        animation: boxPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes boxPop {
+        from { transform: scale(0); opacity: 0; }
+        to { transform: scale(1); opacity: 1; }
+    }
+
+    .fade-bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle at 50% 100%, rgba(50,0,0,0.1), transparent 70%);
+        pointer-events: none;
+        z-index: -1;
+    }
 </style>
 </head>
 
 <body>
 
+<!-- CUSTOM CURSOR ELEMENTS -->
+<div id="cursor-dot"></div>
+<div id="cursor-outline"></div>
+
 <div class="fade-bg"></div>
+<div class="particles" id="particles"></div>
 
+<!-- HOME SECTION -->
 <section id="home" class="active">
-<h1>Welcome To Cursebane</h1>
-<p>Website resmi Curse Community.<br>Perjalanan, sejarah, dan kekuatan yang lahir dari dungeon kegelapan.</p>
-<button onclick="enterSite()">ENTER</button>
+    <h1>Welcome To Cursebane</h1>
+    <p>Website resmi Curse Community.<br>Perjalanan, sejarah, dan kekuatan yang lahir dari dungeon kegelapan.</p>
+    <br>
+    <button onclick="enterSite()" class="hover-target">ENTER THE VOID</button>
 </section>
 
+<!-- MENU SECTION -->
 <section id="menu" class="hidden">
-<h1>Cursebane Community</h1>
-<div class="menu-box">
-<button class="menu-btn" onclick="showSejarah()">Sejarah Curse</button>
-<button class="menu-btn" onclick="showTopup()">Cursebane Top Up</button>
-<button class="menu-btn" onclick="showSeries()">Series Yang Hadir</button>
-</div>
+    <h1>Cursebane Community</h1>
+    <div class="menu-box">
+        <button class="menu-btn hover-target" onclick="showSejarah()">
+            <h3 style="margin:0; font-size:1.5em; margin-bottom:10px;">SEJARAH</h3>
+            <span style="font-size:0.8em; color:#888; font-family:'Orbitron'">Origins of Curse</span>
+        </button>
+        <button class="menu-btn hover-target" onclick="showTopup()">
+            <h3 style="margin:0; font-size:1.5em; margin-bottom:10px;">TOP UP</h3>
+            <span style="font-size:0.8em; color:#888; font-family:'Orbitron'">Support the Server</span>
+        </button>
+        <button class="menu-btn hover-target" onclick="showSeries()">
+            <h3 style="margin:0; font-size:1.5em; margin-bottom:10px;">SERIES</h3>
+            <span style="font-size:0.8em; color:#888; font-family:'Orbitron'">The Last Oddesey</span>
+        </button>
+    </div>
 </section>
 
+<!-- SEJARAH SECTION -->
 <section id="sejarah" class="hidden">
-<h1>Sejarah Curse</h1>
-<p>
-Curse bermula pada Februari 2023 dengan nama Curse Vanilla MCPE, server sederhana bertema vanilla.
-Didirikan oleh Montxyx — nama unik yang lahir dari nickname acak saat bermain Minecraft.
+    <h1>Legacy of Curse</h1>
+    <div style="max-width: 800px; text-align: justify; columns: 1; padding: 20px;">
+        <p>
+            Curse bermula pada Februari 2023. Sebuah awal yang sederhana dengan nama <b>Curse Vanilla MCPE</b>. 
+            Didirikan oleh <span style="color:white; text-shadow:0 0 10px white;">Montxyx</span>, nama yang lahir dari ketidaksengajaan namun menjadi legenda.
+        </p>
+        <p>
+            Era berevolusi menjadi <b>COLTK</b> (Curse Of The Legend Key), memperkenalkan sihir enchant level tinggi.
+            Di sinilah fondasi Java Edition diletakkan. Pertemuan takdir dengan Epan, Sanopalz, dan Zensuan mengubah segalanya.
+            Teknologi bertemu ambisi.
+        </p>
+        <p>
+            Kemudian bangkitlah <b>Cursefury Legends (CFL)</b>. Komunitas meledak, didukung oleh pilar-pilar seperti Rexdzio, Ahmad, dan Latif.
+            Kini, setelah 3 tahun perjalanan (2023–2026), babak terakhir dimulai.
+            Survival RPG tergelap. Dungeon paling mematikan. Ini adalah akhir perjalanan Curse.
+        </p>
+    </div>
 
-Perjalanan berlanjut ke COLTK (Curse Of The Legend Key), server BHC dengan custom enchant level tinggi.
-Di sinilah Mont mulai membangun series Java Edition dan membentuk identitas Curse.
+    <div class="member-list">
+        <h2 style="width:100%; text-align:center; margin-top:0;">Hall of Fame</h2>
+        <ul>
+            <li class="hover-target"><b>Owner</b> <span>Mont</span></li>
+            <li class="hover-target"><b>Admin</b> <span>Xeons, Rama, Sanopalz</span></li>
+            <li class="hover-target"><b>Animator</b> <span>Rossy</span></li>
+            <li class="hover-target"><b>Donatur God</b> <span>Ahmad</span></li>
+            <li class="hover-target"><b>Tech Support</b> <span>Epan</span></li>
+            <li class="hover-target"><b>Streamers</b> <span>Zuanmc, Inderaa, Shade, Ajeul, Latif</span></li>
+        </ul>
+    </div>
 
-Fase berikutnya mempertemukan Mont dengan Epan, Sanopalz, dan Zensuan —
-orang-orang penting dalam perjalanan teknis dan pengembangan server.
-
-Kemudian lahir Cursefury Legends (CFL), menjadi titik kebangkitan komunitas.
-Didukung Rexdzio, Ahmad, Latif, dan banyak member lainnya.
-
-Setelah 3 tahun perjalanan (2023–2026),
-Mont memutuskan menghadirkan series terakhir:
-Survival RPG dengan custom enchant luar biasa dan dungeon menyeramkan.
-
-Ini bukan hanya server.
-Ini adalah akhir perjalanan Curse.
-</p>
-
-<div class="member-list">
-<h2>Member Curse Community</h2>
-<ul>
-<li><b>Owner:</b> Mont</li>
-<li><b>Admin:</b> Xeons, Ramaaaaaaaaaaaaa, Sanopalz</li>
-<li><b>Animator:</b> Rossy</li>
-<li><b>Donatur:</b> Ahmad</li>
-<li><b>Support:</b> Epan</li>
-<li><b>Streamer:</b> Zuanmc, Inderaa, Shade, Ajeul, Latif</li>
-<li><b>Premium:</b> Riju, APIP</li>
-<li><b>Member:</b> Kelpin, Ziorex, Vinoxkal, Eko, Hartana, Zensuan</li>
-</ul>
-</div>
-
-<button onclick="backMenu()">Kembali</button>
+    <button onclick="backMenu()" class="hover-target" style="margin-top:30px;">KEMBALI</button>
 </section>
 
+<!-- TOPUP SECTION -->
 <section id="topup" class="hidden">
-<h1>Cursebane Top Up</h1>
+    <h1>Treasury</h1>
 
-<div class="topup-box">
+    <div class="topup-box">
+        <div class="topup-card hover-target">
+            <h2 style="border:none; margin-top:0;">Money</h2>
+            <div style="width:50px; height:1px; background:white; margin-bottom:20px;"></div>
+            <p style="margin:5px 0; color:#fff;">5K Money — 7K</p>
+            <p style="margin:5px 0; color:#fff;">10K Money — 14K</p>
+            <p style="margin:5px 0; color:#fff;">20K Money — 28K</p>
+        </div>
 
-<div class="topup-card">
-<h2>Money</h2>
-<p>5000 Money — 7K</p>
-<p>10000 Money — 14K</p>
-<p>20000 Money — 28K</p>
-</div>
+        <div class="topup-card hover-target">
+            <h2 style="border:none; margin-top:0;">Keys</h2>
+            <div style="width:50px; height:1px; background:white; margin-bottom:20px;"></div>
+            <p style="margin:5px 0; color:#fff;">Basic — 2K</p>
+            <p style="margin:5px 0; color:#fff;">Legends — 4K</p>
+            <p style="margin:5px 0; color:#fff;">Mythic — 7K</p>
+        </div>
+    </div>
 
-<div class="topup-card">
-<h2>Key</h2>
-<p>Basic Crate — 2K / key</p>
-<p>Legends — 4K / key</p>
-<p>Mythic — 7K / key</p>
-</div>
-
-</div>
-
-<button onclick="backMenu()">Kembali</button>
+    <br><br>
+    <button onclick="backMenu()" class="hover-target">KEMBALI</button>
 </section>
 
+<!-- SERIES SECTION -->
 <section id="series" class="hidden">
-<h1>Cursebane Oddesey</h1>
-<p>Server Survival RPG dengan Custom Enchant dan Dungeon menyeramkan.
-Dunia penuh misteri, boss, dan kekuatan terkutuk.</p>
+    <h1>The Odyssey</h1>
+    <p>Server Survival RPG. Custom Enchant. Nightmare Dungeons.<br>
+    Dunia penuh misteri, boss kuno, dan kekuatan terkutuk.</p>
+    
+    <br>
+    <p style="font-size:0.9rem; color:#666;">GATEWAY:</p>
+    <a href="https://discord.gg/QurP4MvE" target="_blank" class="discord-link hover-target">JOIN DISCORD</a>
 
-<p>Gabung Discord:</p>
-<a href="https://discord.gg/QurP4MvE" target="_blank">discord.gg/QurP4MvE</a>
-
-<button onclick="backMenu()">Kembali</button>
+    <br><br>
+    <button onclick="backMenu()" class="hover-target">KEMBALI</button>
 </section>
 
-<div class="mystery" onclick="toggleMystery()">!</div>
+<!-- MYSTERY BOX -->
+<div class="mystery hover-target" onclick="toggleMystery()">?</div>
 <div class="mystery-box" id="mysteryBox">
-<h3>Misteri</h3>
-<p>Coming Soon</p>
+    <h3 style="margin-top:0; border-bottom:1px solid #444; padding-bottom:10px; font-family:'Cinzel'">Forbidden Knowledge</h3>
+    <p style="font-size:14px; color:#aaa;">Segel belum terbuka.</p>
+    <small style="color:#555;">Coming Soon</small>
 </div>
 
 <script>
+    // --- CUSTOM CURSOR LOGIC ---
+    const cursorDot = document.getElementById("cursor-dot");
+    const cursorOutline = document.getElementById("cursor-outline");
+    
+    // Initial position outside screen
+    let mouseX = -100;
+    let mouseY = -100;
+    let outlineX = -100;
+    let outlineY = -100;
 
-function activateSection(id){
-document.querySelectorAll("section").forEach(sec=>{
-sec.classList.remove("active");
-sec.classList.add("hidden");
-});
-let target=document.getElementById(id);
-target.classList.remove("hidden");
-setTimeout(()=>target.classList.add("active"),50);
-}
+    document.addEventListener("mousemove", (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        
+        // Immediate movement for dot
+        cursorDot.style.left = mouseX + "px";
+        cursorDot.style.top = mouseY + "px";
+    });
 
-function enterSite(){ activateSection("menu"); }
-function showSejarah(){ activateSection("sejarah"); }
-function showTopup(){ activateSection("topup"); }
-function showSeries(){ activateSection("series"); }
-function backMenu(){ activateSection("menu"); }
+    // Smooth follow animation for outline
+    function animateCursor() {
+        let distX = mouseX - outlineX;
+        let distY = mouseY - outlineY;
+        
+        outlineX += distX * 0.15; // Speed of follow
+        outlineY += distY * 0.15;
+        
+        cursorOutline.style.left = outlineX + "px";
+        cursorOutline.style.top = outlineY + "px";
+        
+        requestAnimationFrame(animateCursor);
+    }
+    animateCursor();
 
-function toggleMystery(){
-let box=document.getElementById("mysteryBox");
-box.style.display=box.style.display==="block"?"none":"block";
-}
+    // Hover Effect Logic
+    const interactiveElements = document.querySelectorAll('button, a, .hover-target, .mystery');
+    
+    interactiveElements.forEach(el => {
+        el.addEventListener('mouseenter', () => {
+            document.body.classList.add('hovering');
+        });
+        el.addEventListener('mouseleave', () => {
+            document.body.classList.remove('hovering');
+        });
+    });
 
+    // --- PARTICLE GENERATOR ---
+    const particlesContainer = document.getElementById('particles');
+    const particleCount = 30;
+
+    for (let i = 0; i < particleCount; i++) {
+        const p = document.createElement('div');
+        p.classList.add('particle');
+        p.style.left = Math.random() * 100 + 'vw';
+        p.style.animationDuration = (Math.random() * 5 + 5) + 's';
+        p.style.animationDelay = Math.random() * 5 + 's';
+        particlesContainer.appendChild(p);
+    }
+
+    // --- NAVIGATION LOGIC ---
+    function activateSection(id){
+        // Hide all
+        document.querySelectorAll("section").forEach(sec => {
+            sec.classList.remove("active");
+            setTimeout(() => {
+                if(!sec.classList.contains("active")) {
+                    sec.classList.add("hidden");
+                }
+            }, 800); 
+        });
+
+        // Show target
+        let target = document.getElementById(id);
+        target.classList.remove("hidden");
+        
+        setTimeout(() => {
+            target.classList.add("active");
+            window.scrollTo(0,0);
+        }, 50);
+    }
+
+    function enterSite(){ activateSection("menu"); }
+    function showSejarah(){ activateSection("sejarah"); }
+    function showTopup(){ activateSection("topup"); }
+    function showSeries(){ activateSection("series"); }
+    function backMenu(){ activateSection("menu"); }
+
+    function toggleMystery(){
+        let box = document.getElementById("mysteryBox");
+        if (box.style.display === "block") {
+            box.style.display = "none";
+        } else {
+            box.style.display = "block";
+        }
+    }
 </script>
 
 </body>
