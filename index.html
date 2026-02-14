@@ -1,638 +1,293 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cursebane Community</title>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
-<style>
-    :root {
-        --primary: #e0e0e0;
-        --accent: #8a0000; /* Dark Red for Curse vibe */
-        --glass: rgba(20, 20, 20, 0.6);
-        --border: rgba(255, 255, 255, 0.1);
-        --glow: rgba(255, 255, 255, 0.3);
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cursebane Odyssey | Official Website</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=VT323&family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --mc-dark: #1a1a1a;
+            --mc-silver: #c0c0c0;
+            --mc-moss: #4a5d23;
+            --mc-horror-bg: #0a0a0d;
+        }
 
-    * {
-        cursor: none !important; /* HIDE DEFAULT CURSOR EVERYWHERE */
-        box-sizing: border-box;
-    }
+        body {
+            background-color: var(--mc-horror-bg);
+            color: white;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            margin: 0;
+        }
 
-    body {
-        margin: 0;
-        background-color: #050505;
-        background-image: 
-            radial-gradient(circle at 50% 50%, #1a1a1a 0%, #000 100%);
-        color: var(--primary);
-        font-family: 'Cinzel', serif;
-        overflow-x: hidden;
-        min-height: 100vh;
-        font-weight: 400;
-    }
+        .minecraft-font { font-family: 'VT323', monospace; }
+        .ancient-font { font-family: 'Cinzel', serif; }
 
-    /* CUSTOM CURSOR */
-    #cursor-dot,
-    #cursor-outline {
-        position: fixed;
-        top: 0;
-        left: 0;
-        transform: translate(-50%, -50%);
-        border-radius: 50%;
-        z-index: 9999;
-        pointer-events: none;
-    }
+        /* Background dengan efek gelap dan lumut */
+        .bg-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: 
+                linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.9)),
+                url('https://images.unsplash.com/photo-1615412702130-94e8203f56ec?q=80&w=2071&auto=format&fit=crop'); /* Simulasi Hutan Gelap */
+            background-size: cover;
+            background-position: center;
+            z-index: -1;
+        }
 
-    #cursor-dot {
-        width: 8px;
-        height: 8px;
-        background-color: white;
-        box-shadow: 0 0 10px white;
-    }
+        /* Detail Lumut di pojok-pojok */
+        .moss-corner {
+            position: fixed;
+            width: 300px;
+            height: 300px;
+            pointer-events: none;
+            opacity: 0.4;
+            filter: grayscale(0.5) contrast(1.2);
+            z-index: 10;
+        }
 
-    #cursor-outline {
-        width: 40px;
-        height: 40px;
-        border: 1px solid rgba(255, 255, 255, 0.5);
-        transition: width 0.2s, height 0.2s, background-color 0.2s, border-color 0.2s;
-    }
+        .slide {
+            display: none;
+            height: 100vh;
+            width: 100%;
+            padding: 2rem;
+            animation: fadeIn 0.8s ease-in-out forwards;
+        }
 
-    /* Hover state for cursor */
-    body.hovering #cursor-outline {
-        width: 70px;
-        height: 70px;
-        background-color: rgba(255, 255, 255, 0.1);
-        border-color: transparent;
-        backdrop-filter: blur(2px);
-    }
+        .active { display: flex; flex-direction: column; align-items: center; justify-content: center; }
 
-    /* Scrollbar Styling */
-    ::-webkit-scrollbar {
-        width: 6px;
-    }
-    ::-webkit-scrollbar-track {
-        background: #000;
-    }
-    ::-webkit-scrollbar-thumb {
-        background: #333;
-        border-radius: 3px;
-    }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-    /* Particles Background */
-    .particles {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        pointer-events: none;
-        z-index: -1;
-        overflow: hidden;
-    }
-    .particle {
-        position: absolute;
-        width: 2px;
-        height: 2px;
-        background: rgba(255,255,255,0.3);
-        border-radius: 50%;
-        animation: floatUp 10s linear infinite;
-    }
-    @keyframes floatUp {
-        0% { transform: translateY(100vh) scale(0); opacity: 0; }
-        50% { opacity: 0.8; }
-        100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
-    }
+        .silver-text {
+            color: #b8b8b8;
+            text-shadow: 0 0 15px rgba(192, 192, 192, 0.4);
+        }
 
-    /* Layout & Sections */
-    section {
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        padding: 60px 20px;
-        text-align: center;
-        opacity: 0;
-        transform: scale(0.95) translateY(20px);
-        transition: opacity 0.8s cubic-bezier(0.23, 1, 0.32, 1), 
-                    transform 0.8s cubic-bezier(0.23, 1, 0.32, 1);
-        position: absolute;
-        width: 100%;
-        top: 0;
-        pointer-events: none;
-        filter: blur(10px);
-    }
+        .glass-panel {
+            background: rgba(20, 20, 20, 0.85);
+            border: 2px solid var(--mc-moss);
+            box-shadow: 0 0 20px rgba(74, 93, 35, 0.3);
+            border-radius: 4px;
+            position: relative;
+            overflow-y: auto;
+            max-height: 80vh;
+        }
 
-    section.active {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-        position: relative;
-        pointer-events: all;
-        filter: blur(0);
-    }
+        .btn-curse {
+            background: #2a2a2a;
+            border-bottom: 4px solid #000;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
 
-    section.hidden {
-        display: none;
-    }
+        .btn-curse:hover {
+            background: var(--mc-moss);
+            transform: scale(1.05);
+        }
 
-    /* Typography */
-    h1 {
-        font-size: clamp(40px, 6vw, 70px);
-        color: #fff;
-        text-transform: uppercase;
-        letter-spacing: 8px;
-        margin-bottom: 30px;
-        background: linear-gradient(to bottom, #fff 0%, #888 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        filter: drop-shadow(0 0 20px rgba(255,255,255,0.2));
-    }
+        /* Scrollbar ala Minecraft */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1a1a1a; }
+        ::-webkit-scrollbar-thumb { background: var(--mc-moss); }
 
-    h2 {
-        color: #ddd;
-        margin-top: 30px;
-        font-size: 1.8rem;
-        letter-spacing: 4px;
-        position: relative;
-        display: inline-block;
-        padding-bottom: 15px;
-    }
-    
-    h2::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 60px;
-        height: 2px;
-        background: linear-gradient(90deg, transparent, #fff, transparent);
-    }
-
-    p {
-        max-width: 800px;
-        line-height: 2;
-        font-size: 16px;
-        color: #aaa;
-        margin-bottom: 30px;
-        font-family: 'Orbitron', sans-serif;
-        font-weight: 300;
-        letter-spacing: 1px;
-    }
-
-    /* Buttons */
-    button {
-        padding: 16px 40px;
-        background: transparent;
-        border: 1px solid var(--border);
-        color: #fff;
-        font-family: 'Orbitron', sans-serif;
-        font-size: 14px;
-        letter-spacing: 3px;
-        text-transform: uppercase;
-        position: relative;
-        overflow: hidden;
-        transition: 0.4s;
-        backdrop-filter: blur(5px);
-        box-shadow: 0 0 0 rgba(255,255,255,0);
-        margin: 15px;
-    }
-
-    button::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-        transition: 0.5s;
-    }
-
-    button:hover {
-        border-color: rgba(255,255,255,0.6);
-        box-shadow: 0 0 30px rgba(255,255,255,0.1);
-        text-shadow: 0 0 10px white;
-        transform: translateY(-2px);
-    }
-
-    button:hover::before {
-        left: 100%;
-    }
-
-    /* Menu & Cards - Glassmorphism */
-    .menu-box {
-        display: flex;
-        gap: 30px;
-        flex-wrap: wrap;
-        justify-content: center;
-        margin-top: 50px;
-        max-width: 1200px;
-    }
-
-    .menu-btn {
-        width: 260px;
-        padding: 30px;
-        background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.4) 100%);
-        border: 1px solid var(--border);
-        backdrop-filter: blur(10px);
-        transition: 0.4s ease-out;
-    }
-
-    .menu-btn:hover {
-        background: rgba(255,255,255,0.08);
-        border-color: rgba(255,255,255,0.4);
-        transform: translateY(-10px) scale(1.02);
-        box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-    }
-
-    .member-list {
-        background: linear-gradient(180deg, rgba(20,20,20,0.8) 0%, rgba(10,10,10,0.95) 100%);
-        padding: 40px;
-        border: 1px solid var(--border);
-        border-top: 1px solid rgba(255,255,255,0.2);
-        margin-top: 50px;
-        width: 100%;
-        max-width: 700px;
-        text-align: left;
-        box-shadow: 0 0 50px rgba(0,0,0,0.5);
-        backdrop-filter: blur(20px);
-        position: relative;
-    }
-    
-    .member-list::before {
-        content:''; position: absolute; top:0; left:0; width:100%; height:1px;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
-    }
-
-    .member-list ul {
-        list-style: none;
-        padding: 0;
-    }
-
-    .member-list li {
-        margin: 15px 0;
-        border-bottom: 1px solid rgba(255,255,255,0.05);
-        padding-bottom: 10px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        transition: 0.3s;
-    }
-    
-    .member-list li:hover {
-        padding-left: 10px;
-        border-bottom-color: rgba(255,255,255,0.2);
-    }
-    
-    .member-list li b {
-        color: #fff;
-        font-family: 'Cinzel', serif;
-        font-size: 1.1em;
-        text-shadow: 0 0 10px rgba(255,255,255,0.3);
-    }
-
-    .topup-box {
-        display: flex;
-        gap: 40px;
-        flex-wrap: wrap;
-        justify-content: center;
-        margin-top: 50px;
-    }
-
-    .topup-card {
-        background: rgba(255,255,255,0.03);
-        padding: 40px 20px;
-        border: 1px solid var(--border);
-        width: 280px;
-        transition: 0.5s;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .topup-card::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 2px;
-        background: linear-gradient(90deg, transparent, #fff, transparent);
-        transform: scaleX(0);
-        transition: 0.5s;
-    }
-
-    .topup-card:hover {
-        transform: translateY(-10px);
-        background: rgba(255,255,255,0.06);
-        box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-    }
-
-    .topup-card:hover::after {
-        transform: scaleX(1);
-    }
-
-    .discord-link {
-        color: #7289da;
-        text-decoration: none;
-        font-family: 'Orbitron', sans-serif;
-        font-size: 1.2rem;
-        border: 1px solid rgba(114, 137, 218, 0.3);
-        padding: 15px 30px;
-        transition: 0.3s;
-        display: inline-block;
-        margin-top: 20px;
-        background: rgba(114, 137, 218, 0.05);
-        letter-spacing: 2px;
-    }
-
-    .discord-link:hover {
-        background: rgba(114, 137, 218, 0.2);
-        color: white;
-        box-shadow: 0 0 30px rgba(114, 137, 218, 0.4);
-        border-color: #7289da;
-    }
-
-    .mystery {
-        position: fixed;
-        bottom: 30px;
-        right: 30px;
-        width: 60px;
-        height: 60px;
-        background: rgba(0,0,0,0.8);
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: bold;
-        border: 1px solid rgba(255,255,255,0.2);
-        border-radius: 50%;
-        transition: 0.5s;
-        z-index: 100;
-        font-family: 'Orbitron', sans-serif;
-        backdrop-filter: blur(5px);
-    }
-
-    .mystery:hover {
-        box-shadow: 0 0 30px rgba(255,255,255,0.4);
-        border-color: white;
-        transform: rotate(180deg);
-    }
-
-    .mystery-box {
-        position: fixed;
-        bottom: 100px;
-        right: 30px;
-        background: rgba(10, 10, 10, 0.95);
-        color: white;
-        padding: 30px;
-        display: none;
-        border: 1px solid rgba(255,255,255,0.2);
-        z-index: 99;
-        min-width: 250px;
-        box-shadow: 0 0 50px rgba(0,0,0,0.8);
-        backdrop-filter: blur(20px);
-        transform-origin: bottom right;
-        animation: boxPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-
-    @keyframes boxPop {
-        from { transform: scale(0); opacity: 0; }
-        to { transform: scale(1); opacity: 1; }
-    }
-
-    .fade-bg {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: radial-gradient(circle at 50% 100%, rgba(50,0,0,0.1), transparent 70%);
-        pointer-events: none;
-        z-index: -1;
-    }
-</style>
+        .mistery-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: black;
+            display: none;
+            z-index: 100;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+    </style>
 </head>
-
 <body>
 
-<!-- CUSTOM CURSOR ELEMENTS -->
-<div id="cursor-dot"></div>
-<div id="cursor-outline"></div>
+    <div class="bg-overlay"></div>
+    
+    <!-- Moss Textures -->
+    <div class="moss-corner top-0 left-0" style="background: radial-gradient(circle at top left, #4a5d23 0%, transparent 70%);"></div>
+    <div class="moss-corner bottom-0 right-0" style="background: radial-gradient(circle at bottom right, #4a5d23 0%, transparent 70%);"></div>
 
-<div class="fade-bg"></div>
-<div class="particles" id="particles"></div>
-
-<!-- HOME SECTION -->
-<section id="home" class="active">
-    <h1>Welcome To Cursebane</h1>
-    <p>Website resmi Curse Community.<br>Perjalanan, sejarah, dan kekuatan yang lahir dari dungeon kegelapan.</p>
-    <br>
-    <button onclick="enterSite()" class="hover-target">ENTER THE VOID</button>
-</section>
-
-<!-- MENU SECTION -->
-<section id="menu" class="hidden">
-    <h1>Cursebane Community</h1>
-    <div class="menu-box">
-        <button class="menu-btn hover-target" onclick="showSejarah()">
-            <h3 style="margin:0; font-size:1.5em; margin-bottom:10px;">SEJARAH</h3>
-            <span style="font-size:0.8em; color:#888; font-family:'Orbitron'">Origins of Curse</span>
-        </button>
-        <button class="menu-btn hover-target" onclick="showTopup()">
-            <h3 style="margin:0; font-size:1.5em; margin-bottom:10px;">TOP UP</h3>
-            <span style="font-size:0.8em; color:#888; font-family:'Orbitron'">Support the Server</span>
-        </button>
-        <button class="menu-btn hover-target" onclick="showSeries()">
-            <h3 style="margin:0; font-size:1.5em; margin-bottom:10px;">SERIES</h3>
-            <span style="font-size:0.8em; color:#888; font-family:'Orbitron'">The Last Oddesey</span>
-        </button>
-    </div>
-</section>
-
-<!-- SEJARAH SECTION -->
-<section id="sejarah" class="hidden">
-    <h1>Legacy of Curse</h1>
-    <div style="max-width: 800px; text-align: justify; columns: 1; padding: 20px;">
-        <p>
-            Curse bermula pada Februari 2023. Sebuah awal yang sederhana dengan nama <b>Curse Vanilla MCPE</b>. 
-            Didirikan oleh <span style="color:white; text-shadow:0 0 10px white;">Montxyx</span>, nama yang lahir dari ketidaksengajaan namun menjadi legenda.
+    <!-- SLIDE 1: LANDING -->
+    <div id="slide1" class="slide active">
+        <h1 class="ancient-font text-6xl md:text-8xl silver-text mb-4 text-center">Welcome To Cursebane</h1>
+        <p class="minecraft-font text-2xl text-gray-400 text-center max-w-2xl px-4">
+            Official website for the Curse Community. A realm where legends thrive and stories end in shadows.
         </p>
-        <p>
-            Era berevolusi menjadi <b>COLTK</b> (Curse Of The Legend Key), memperkenalkan sihir enchant level tinggi.
-            Di sinilah fondasi Java Edition diletakkan. Pertemuan takdir dengan Epan, Sanopalz, dan Zensuan mengubah segalanya.
-            Teknologi bertemu ambisi.
-        </p>
-        <p>
-            Kemudian bangkitlah <b>Cursefury Legends (CFL)</b>. Komunitas meledak, didukung oleh pilar-pilar seperti Rexdzio, Ahmad, dan Latif.
-            Kini, setelah 3 tahun perjalanan (2023–2026), babak terakhir dimulai.
-            Survival RPG tergelap. Dungeon paling mematikan. Ini adalah akhir perjalanan Curse.
-        </p>
-    </div>
-
-    <div class="member-list">
-        <h2 style="width:100%; text-align:center; margin-top:0;">Hall of Fame</h2>
-        <ul>
-            <li class="hover-target"><b>Owner</b> <span>Mont</span></li>
-            <li class="hover-target"><b>Admin</b> <span>Xeons, Rama, Sanopalz</span></li>
-            <li class="hover-target"><b>Animator</b> <span>Rossy</span></li>
-            <li class="hover-target"><b>Donatur God</b> <span>Ahmad</span></li>
-            <li class="hover-target"><b>Tech Support</b> <span>Epan</span></li>
-            <li class="hover-target"><b>Streamers</b> <span>Zuanmc, Inderaa, Shade, Ajeul, Latif</span></li>
-        </ul>
-    </div>
-
-    <button onclick="backMenu()" class="hover-target" style="margin-top:30px;">KEMBALI</button>
-</section>
-
-<!-- TOPUP SECTION -->
-<section id="topup" class="hidden">
-    <h1>Treasury</h1>
-
-    <div class="topup-box">
-        <div class="topup-card hover-target">
-            <h2 style="border:none; margin-top:0;">Money</h2>
-            <div style="width:50px; height:1px; background:white; margin-bottom:20px;"></div>
-            <p style="margin:5px 0; color:#fff;">5K Money — 7K</p>
-            <p style="margin:5px 0; color:#fff;">10K Money — 14K</p>
-            <p style="margin:5px 0; color:#fff;">20K Money — 28K</p>
-        </div>
-
-        <div class="topup-card hover-target">
-            <h2 style="border:none; margin-top:0;">Keys</h2>
-            <div style="width:50px; height:1px; background:white; margin-bottom:20px;"></div>
-            <p style="margin:5px 0; color:#fff;">Basic — 2K</p>
-            <p style="margin:5px 0; color:#fff;">Legends — 4K</p>
-            <p style="margin:5px 0; color:#fff;">Mythic — 7K</p>
+        <div class="fixed bottom-10 right-10">
+            <button onclick="changeSlide(2)" class="minecraft-font text-4xl hover:text-green-500 transition-colors duration-300">
+                ENTER &gt;
+            </button>
         </div>
     </div>
 
-    <br><br>
-    <button onclick="backMenu()" class="hover-target">KEMBALI</button>
-</section>
+    <!-- SLIDE 2: MAIN MENU -->
+    <div id="slide2" class="slide">
+        <h2 class="ancient-font text-4xl mb-12 silver-text">PILIH TAKDIRMU</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-5xl">
+            <div onclick="showContent('sejarah')" class="btn-curse p-8 text-center glass-panel flex flex-col items-center group">
+                <span class="minecraft-font text-4xl mb-4 group-hover:text-green-400">📜 Sejarah Curse</span>
+                <p class="text-sm text-gray-400">Menelusuri jejak kaki Sang Owner dari awal mula hingga akhir.</p>
+            </div>
+            <div onclick="showContent('topup')" class="btn-curse p-8 text-center glass-panel flex flex-col items-center group">
+                <span class="minecraft-font text-4xl mb-4 group-hover:text-green-400">💎 Cursebane Top Up</span>
+                <p class="text-sm text-gray-400">Dukungan finansial untuk menjaga komunitas tetap bernapas.</p>
+            </div>
+            <div onclick="showContent('series')" class="btn-curse p-8 text-center glass-panel flex flex-col items-center group">
+                <span class="minecraft-font text-4xl mb-4 group-hover:text-green-400">⚔️ Series Hadir</span>
+                <p class="text-sm text-gray-400">Informasi server yang sedang berjalan saat ini.</p>
+            </div>
+        </div>
+        <button onclick="changeSlide(1)" class="mt-12 text-gray-500 hover:text-white">&larr; Kembali</button>
+    </div>
 
-<!-- SERIES SECTION -->
-<section id="series" class="hidden">
-    <h1>Cursebane Odyssey</h1>
-    <p>Server Survival RPG. Custom Enchant. Nightmare Dungeons.<br>
-    Dunia penuh misteri, boss kuno, dan kekuatan terkutuk.</p>
-    
-    <br>
-    <p style="font-size:0.9rem; color:#666;">GATEWAY:</p>
-    <a href="https://discord.gg/QurP4MvE" target="_blank" class="discord-link hover-target">JOIN DISCORD</a>
+    <!-- MODAL CONTENT: SEJARAH -->
+    <div id="modal-sejarah" class="slide">
+        <div class="glass-panel p-8 md:p-12 max-w-4xl w-full">
+            <h2 class="ancient-font text-4xl mb-6 silver-text border-b border-gray-700 pb-2">THE LEGACY OF CURSE (2023 - 2026)</h2>
+            <div class="text-gray-300 space-y-4 leading-relaxed overflow-y-auto pr-4" style="max-height: 50vh;">
+                <p>Awal mula <strong>Curse</strong> didirikan pada Februari 2023 dengan nama <em>Curse Vanilla MCPE</em>. Sebuah server bertema vanilla sederhana yang berjalan hingga Mei. Server ini didirikan oleh seseorang bernama <strong>Montxyx</strong>. Mengapa namanya Montxyx? Semua berawal saat Mont membuat nickname Minecraft secara asal karena sifatnya yang memang tergolong unik.</p>
+                
+                <p>Pada series kedua, ia mulai dikenal sebagai Mont, owner dari server <strong>COLTK (Curse of the Legend Key)</strong>. Server ini mengusung tema BHC dengan custom enchant level tinggi, berdiri sejak Desember 2023 hingga Maret 2024. Di sinilah Mont mulai membuat series sendiri di Java Edition dan bertemu sosok berjasa dalam hidupnya: <strong>Epan</strong>.</p>
+                
+                <p>Setelah melewati berbagai fase, dari server <em>Last Warrior</em> hingga bertemu kawan setia seperti <strong>Sanopalz</strong> dan <strong>Zensuan</strong>, Mont banyak belajar tentang manajemen server. Lahirlah <strong>CFL (Cursefury Legends)</strong>, series yang berjalan mulus di mana ia merekrut <strong>Rexdzio (Ziorex)</strong>, sosok yang selalu menemani saat kesepian. Ada pula <strong>Ahmad (paksamsul7)</strong> dan <strong>Latif</strong> yang setia memberikan dukungan penuh.</p>
+                
+                <p>Tiga tahun telah berlalu (2023-2026). Kini, Mont memutuskan membuat series terakhirnya: <strong>Cursebane Odyssey</strong>. Bertema Survival RPG dengan custom enchant yang luar biasa, server ini adalah penutup sekaligus penghormatan bagi komunitas Curse.</p>
+                
+                <p class="italic text-green-400">"Aku, Mont, sangat berterimakasih kepada kalian semua. Aku tidak bisa membalas kebaikan kalian. Semoga ke depan kita semua menjadi yang terbaik. Aku pamit, kecuali untuk si pencuri asset. Bye."</p>
 
-    <br><br>
-    <button onclick="backMenu()" class="hover-target">KEMBALI</button>
-</section>
+                <div class="mt-8 border-t border-gray-700 pt-6">
+                    <h3 class="minecraft-font text-3xl mb-4 text-green-500">LIST OF LEGENDS</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                        <div class="bg-black/50 p-2 border-l-2 border-red-500"><strong>OWNER:</strong> Mont</div>
+                        <div class="bg-black/50 p-2 border-l-2 border-blue-500"><strong>ADMIN:</strong> Xeons</div>
+                        <div class="bg-black/50 p-2 border-l-2 border-blue-500"><strong>ADMIN:</strong> Rama</div>
+                        <div class="bg-black/50 p-2 border-l-2 border-blue-500"><strong>ADMIN:</strong> Sanopalz</div>
+                        <div class="bg-black/50 p-2 border-l-2 border-purple-500"><strong>ANIMATOR:</strong> Rossy</div>
+                        <div class="bg-black/50 p-2 border-l-2 border-yellow-500"><strong>DONATUR:</strong> Ahmad</div>
+                        <div class="bg-black/50 p-2 border-l-2 border-green-500"><strong>SUPPORT:</strong> Epan</div>
+                        <div class="bg-black/50 p-2 border-l-2 border-pink-500"><strong>STREAMER:</strong> Zuanmc</div>
+                        <div class="bg-black/50 p-2 border-l-2 border-pink-500"><strong>STREAMER:</strong> Inderaa</div>
+                        <div class="bg-black/50 p-2 border-l-2 border-pink-500"><strong>STREAMER:</strong> Shade</div>
+                        <div class="bg-black/50 p-2 border-l-2 border-pink-500"><strong>STREAMER:</strong> Ajeul</div>
+                        <div class="bg-black/50 p-2 border-l-2 border-pink-500"><strong>STREAMER:</strong> Latif</div>
+                        <div class="bg-black/50 p-2 border-l-2 border-cyan-500"><strong>PREMIUM:</strong> Riju</div>
+                        <div class="bg-black/50 p-2 border-l-2 border-cyan-500"><strong>PREMIUM:</strong> APIP</div>
+                        <div class="bg-black/50 p-2 border-l-2 border-gray-500"><strong>MEMBER:</strong> Kelpin</div>
+                        <div class="bg-black/50 p-2 border-l-2 border-gray-500"><strong>MEMBER:</strong> Ziorex</div>
+                        <div class="bg-black/50 p-2 border-l-2 border-gray-500"><strong>MEMBER:</strong> Vinoxkal</div>
+                        <div class="bg-black/50 p-2 border-l-2 border-gray-500"><strong>MEMBER:</strong> Eko</div>
+                        <div class="bg-black/50 p-2 border-l-2 border-gray-500"><strong>MEMBER:</strong> Hartana</div>
+                        <div class="bg-black/50 p-2 border-l-2 border-gray-500"><strong>MEMBER:</strong> Zensuan</div>
+                    </div>
+                </div>
+            </div>
+            <button onclick="changeSlide(2)" class="mt-8 btn-curse px-6 py-2 minecraft-font text-xl">TUTUP</button>
+        </div>
+    </div>
 
-<!-- MYSTERY BOX -->
-<div class="mystery hover-target" onclick="toggleMystery()">?</div>
-<div class="mystery-box" id="mysteryBox">
-    <h3 style="margin-top:0; border-bottom:1px solid #444; padding-bottom:10px; font-family:'Cinzel'">Forbidden Knowledge</h3>
-    <p style="font-size:14px; color:#aaa;">Segel belum terbuka.</p>
-    <small style="color:#555;">Coming Soon</small>
-</div>
+    <!-- MODAL CONTENT: TOPUP -->
+    <div id="modal-topup" class="slide">
+        <div class="glass-panel p-8 max-w-2xl w-full">
+            <h2 class="ancient-font text-4xl mb-6 silver-text text-center">TOP UP CURSEBANE</h2>
+            <div class="flex gap-4 mb-8">
+                <button onclick="toggleTopup('money')" id="tab-money" class="flex-1 p-3 bg-green-900 border-2 border-green-400 minecraft-font text-2xl">MONEY</button>
+                <button onclick="toggleTopup('key')" id="tab-key" class="flex-1 p-3 bg-gray-800 border-2 border-transparent minecraft-font text-2xl">KEY</button>
+            </div>
 
-<script>
-    // --- CUSTOM CURSOR LOGIC ---
-    const cursorDot = document.getElementById("cursor-dot");
-    const cursorOutline = document.getElementById("cursor-outline");
-    
-    // Initial position outside screen
-    let mouseX = -100;
-    let mouseY = -100;
-    let outlineX = -100;
-    let outlineY = -100;
+            <div id="content-money" class="space-y-4">
+                <div class="flex justify-between p-4 bg-black/40 border border-gray-700"><span>5.000 Money</span> <span class="text-green-400">Rp 7.000</span></div>
+                <div class="flex justify-between p-4 bg-black/40 border border-gray-700"><span>10.000 Money</span> <span class="text-green-400">Rp 14.000</span></div>
+                <div class="flex justify-between p-4 bg-black/40 border border-gray-700"><span>15.000 Money</span> <span class="text-green-400">Rp 21.000</span></div>
+                <p class="text-xs text-center text-gray-500 mt-4 italic">Hubungi admin untuk kelipatan lainnya.</p>
+            </div>
 
-    document.addEventListener("mousemove", (e) => {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
-        
-        // Immediate movement for dot
-        cursorDot.style.left = mouseX + "px";
-        cursorDot.style.top = mouseY + "px";
-    });
+            <div id="content-key" class="space-y-4 hidden">
+                <div class="flex justify-between p-4 bg-black/40 border border-gray-700"><span>Basic Crate</span> <span class="text-yellow-400">2k / key</span></div>
+                <div class="flex justify-between p-4 bg-black/40 border border-gray-700"><span>Legends Crate</span> <span class="text-yellow-400">4k / key</span></div>
+                <div class="flex justify-between p-4 bg-black/40 border border-gray-700"><span>Mythic Crate</span> <span class="text-yellow-400">7k / key</span></div>
+            </div>
 
-    // Smooth follow animation for outline
-    function animateCursor() {
-        let distX = mouseX - outlineX;
-        let distY = mouseY - outlineY;
-        
-        outlineX += distX * 0.15; // Speed of follow
-        outlineY += distY * 0.15;
-        
-        cursorOutline.style.left = outlineX + "px";
-        cursorOutline.style.top = outlineY + "px";
-        
-        requestAnimationFrame(animateCursor);
-    }
-    animateCursor();
+            <button onclick="changeSlide(2)" class="mt-8 w-full btn-curse py-2 minecraft-font text-xl">KEMBALI</button>
+        </div>
+    </div>
 
-    // Hover Effect Logic
-    const interactiveElements = document.querySelectorAll('button, a, .hover-target, .mystery');
-    
-    interactiveElements.forEach(el => {
-        el.addEventListener('mouseenter', () => {
-            document.body.classList.add('hovering');
-        });
-        el.addEventListener('mouseleave', () => {
-            document.body.classList.remove('hovering');
-        });
-    });
+    <!-- MODAL CONTENT: SERIES -->
+    <div id="modal-series" class="slide">
+        <div class="glass-panel p-12 max-w-2xl w-full text-center">
+            <h2 class="ancient-font text-5xl mb-4 silver-text">CURSEBANE ODDESEY</h2>
+            <p class="text-gray-400 mb-8 italic">
+                Survival RPG - Custom Enchant - Dangerous Dungeons
+            </p>
+            <p class="mb-8">Server ini adalah puncak dari perjalanan Curse Community. Rasakan petualangan sejati dengan fitur-fitur yang belum pernah ada sebelumnya.</p>
+            
+            <a href="https://discord.gg/QurP4MvE" target="_blank" class="block w-full btn-curse py-4 minecraft-font text-3xl text-blue-400 mb-6">
+                JOIN DISCORD &gt;
+            </a>
+            
+            <button onclick="changeSlide(2)" class="text-gray-500 hover:text-white">Kembali ke Menu</button>
+        </div>
+    </div>
 
-    // --- PARTICLE GENERATOR ---
-    const particlesContainer = document.getElementById('particles');
-    const particleCount = 30;
+    <!-- MISTERY BUTTON -->
+    <div class="fixed bottom-4 right-4 z-50">
+        <button onclick="openMistery()" class="bg-black text-white w-10 h-10 rounded-full border border-gray-800 flex items-center justify-center hover:bg-red-900 transition-colors">!</button>
+    </div>
 
-    for (let i = 0; i < particleCount; i++) {
-        const p = document.createElement('div');
-        p.classList.add('particle');
-        p.style.left = Math.random() * 100 + 'vw';
-        p.style.animationDuration = (Math.random() * 5 + 5) + 's';
-        p.style.animationDelay = Math.random() * 5 + 's';
-        particlesContainer.appendChild(p);
-    }
+    <!-- MISTERY OVERLAY -->
+    <div id="mistery" class="mistery-overlay" onclick="closeMistery()">
+        <h2 class="ancient-font text-6xl text-white mb-4">MISTERI</h2>
+        <p class="minecraft-font text-3xl text-gray-600">COMING SOON</p>
+        <p class="mt-20 text-xs text-gray-800 italic">Klik di mana saja untuk kembali...</p>
+    </div>
 
-    // --- NAVIGATION LOGIC ---
-    function activateSection(id){
-        // Hide all
-        document.querySelectorAll("section").forEach(sec => {
-            sec.classList.remove("active");
-            setTimeout(() => {
-                if(!sec.classList.contains("active")) {
-                    sec.classList.add("hidden");
-                }
-            }, 800); 
-        });
-
-        // Show target
-        let target = document.getElementById(id);
-        target.classList.remove("hidden");
-        
-        setTimeout(() => {
-            target.classList.add("active");
-            window.scrollTo(0,0);
-        }, 50);
-    }
-
-    function enterSite(){ activateSection("menu"); }
-    function showSejarah(){ activateSection("sejarah"); }
-    function showTopup(){ activateSection("topup"); }
-    function showSeries(){ activateSection("series"); }
-    function backMenu(){ activateSection("menu"); }
-
-    function toggleMystery(){
-        let box = document.getElementById("mysteryBox");
-        if (box.style.display === "block") {
-            box.style.display = "none";
-        } else {
-            box.style.display = "block";
+    <script>
+        function changeSlide(id) {
+            const slides = document.querySelectorAll('.slide');
+            slides.forEach(s => s.classList.remove('active'));
+            document.getElementById('slide' + id).classList.add('active');
         }
-    }
-</script>
 
+        function showContent(type) {
+            const slides = document.querySelectorAll('.slide');
+            slides.forEach(s => s.classList.remove('active'));
+            document.getElementById('modal-' + type).classList.add('active');
+        }
+
+        function toggleTopup(mode) {
+            const moneyBtn = document.getElementById('tab-money');
+            const keyBtn = document.getElementById('tab-key');
+            const moneyContent = document.getElementById('content-money');
+            const keyContent = document.getElementById('content-key');
+
+            if(mode === 'money') {
+                moneyContent.classList.remove('hidden');
+                keyContent.classList.add('hidden');
+                moneyBtn.style.backgroundColor = '#4a5d23';
+                keyBtn.style.backgroundColor = '#1a1a1a';
+            } else {
+                moneyContent.classList.add('hidden');
+                keyContent.classList.remove('hidden');
+                keyBtn.style.backgroundColor = '#4a5d23';
+                moneyBtn.style.backgroundColor = '#1a1a1a';
+            }
+        }
+
+        function openMistery() {
+            document.getElementById('mistery').style.display = 'flex';
+        }
+
+        function closeMistery() {
+            document.getElementById('mistery').style.display = 'none';
+        }
+    </script>
 </body>
 </html>
