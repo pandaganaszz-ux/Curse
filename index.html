@@ -13,6 +13,7 @@
             --mc-silver: #f0f0f0;
             --glow-cyan: #00f2ff;
             --accent-purple: #6a0dad;
+            --gold-aura: rgba(255, 215, 0, 0.3);
         }
 
         body {
@@ -81,6 +82,30 @@
         @keyframes auraPulse {
             0%, 100% { opacity: 0.3; transform: translate(-50%, -50%) scale(1); }
             50% { opacity: 0.6; transform: translate(-50%, -50%) scale(1.1); }
+        }
+
+        /* Gold Aura for MVP Donor */
+        .gold-aura-effect {
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 215, 0, 0.3) !important;
+            background: linear-gradient(90deg, rgba(255,215,0,0.05) 0%, rgba(255,215,0,0.1) 50%, rgba(255,215,0,0.05) 100%) !important;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.1);
+        }
+
+        .gold-aura-effect::after {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.2) 0%, transparent 60%);
+            animation: goldPulse 3s infinite ease-in-out;
+            pointer-events: none;
+        }
+
+        @keyframes goldPulse {
+            0%, 100% { opacity: 0.2; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
         }
 
         .warden-glow {
@@ -324,37 +349,100 @@
 
     <!-- MODAL: SEJARAH -->
     <div id="modal-sejarah" class="slide">
-        <div class="glass-panel p-8 md:p-16 max-w-6xl w-full flex flex-col md:flex-row gap-12 overflow-hidden h-[85vh]">
-            <div class="md:w-1/4">
-                <h2 class="ancient-font text-4xl text-white mb-6 uppercase">Kronik<br>Kutukan</h2>
-                <div class="h-1 w-16 bg-cyan-900 mb-8"></div>
-                <div class="space-y-4 minecraft-font text-lg text-gray-500">
-                    <div class="flex items-center gap-4 text-cyan-700"><span class="w-2 h-2 bg-cyan-700 rotate-45"></span> FEB 2023</div>
-                    <div class="flex items-center gap-4"><span class="w-2 h-2 bg-gray-800 rotate-45"></span> DES 2023</div>
-                    <div class="flex items-center gap-4"><span class="w-2 h-2 bg-gray-800 rotate-45"></span> JAN 2024</div>
-                    <div class="flex items-center gap-4"><span class="w-2 h-2 bg-gray-800 rotate-45"></span> 2026</div>
-                </div>
+        <div class="glass-panel p-8 md:p-12 max-w-6xl w-full flex flex-col md:flex-row gap-12 overflow-hidden h-[85vh]">
+            <div class="md:w-1/4 border-r border-white/5 pr-4">
+                <h2 class="ancient-font text-4xl text-white mb-6 uppercase leading-tight">Arkiv<br>Kutukan</h2>
+                <div class="h-1 w-16 bg-cyan-600 mb-10"></div>
+                
+                <nav class="space-y-6 minecraft-font text-lg">
+                    <div class="group cursor-pointer">
+                        <p class="text-cyan-700 text-xs tracking-widest mb-1">FOUNDATION</p>
+                        <p class="text-white group-hover:text-cyan-400 transition-all">Februari 2023</p>
+                    </div>
+                    <div class="group cursor-pointer">
+                        <p class="text-gray-600 text-xs tracking-widest mb-1">TRANSFORMATION</p>
+                        <p class="text-gray-400 group-hover:text-cyan-400 transition-all">Desember 2023</p>
+                    </div>
+                    <div class="group cursor-pointer">
+                        <p class="text-gray-600 text-xs tracking-widest mb-1">TECHNICAL LEAP</p>
+                        <p class="text-gray-400 group-hover:text-cyan-400 transition-all">Januari 2024</p>
+                    </div>
+                    <div class="group cursor-pointer">
+                        <p class="text-gray-600 text-xs tracking-widest mb-1">THE PEAK</p>
+                        <p class="text-gray-400 group-hover:text-cyan-400 transition-all">2026 - Odyssey</p>
+                    </div>
+                </nav>
             </div>
             
-            <div class="md:w-3/4 overflow-y-auto pr-6 custom-scroll text-gray-400 text-lg leading-relaxed">
-                <h3 class="minecraft-font text-cyan-500 text-3xl mb-6 uppercase tracking-widest border-b border-white/5 pb-2">🕯️ Dari Vanilla hingga Odyssey</h3>
-                <p class="mb-6">Sejarah <strong>Cursebane</strong> bukan sekadar catatan teknis, melainkan narasi tentang dedikasi dan evolusi komunitas untuk terus melampaui batas.</p>
-                <h4 class="minecraft-font text-white text-2xl mt-8 mb-4">1. Era Kesederhanaan (Februari 2023)</h4>
-                <p class="mb-6">Perjalanan dimulai dengan berdirinya <strong>Curse Vanilla MCPE</strong>. Visi Mont adalah menciptakan dunia murni tanpa fitur berlebihan.</p>
-                <h4 class="minecraft-font text-white text-2xl mt-8 mb-4">2. Evolusi Kekuatan (Desember 2023)</h4>
-                <p class="mb-6">Transformasi terjadi melalui seri <strong>COLTK</strong>. Dengan tema BHC dan custom enchant level tinggi.</p>
-                <h4 class="minecraft-font text-white text-2xl mt-8 mb-4">3. Fondasi Teknis (Awal 2024)</h4>
-                <p class="mb-6">Titik balik fundamental saat Mont mendalami plugin Java Edition bersama Epan.</p>
-                <h4 class="minecraft-font text-white text-2xl mt-8 mb-4">4. Era Kebangkitan (CFL)</h4>
-                <p class="mb-6">CFL menandai bangkitnya Curse sebagai ekosistem profesional.</p>
-                <h4 class="minecraft-font text-white text-2xl mt-8 mb-4">5. Puncak: Cursebane Odyssey (2026)</h4>
-                <p class="mb-10">Survival RPG dengan Custom Enchant spektakuler dan tantangan tingkat tinggi.</p>
-                <button onclick="goToSlide('slide-hub')" class="w-full py-4 border border-gray-800 minecraft-font text-2xl hover:bg-white hover:text-black transition-all">KEMBALI KE HUB</button>
+            <div class="md:w-3/4 overflow-y-auto pr-6 custom-scroll text-gray-400 text-lg leading-relaxed text-justify">
+                <h3 class="minecraft-font text-cyan-500 text-4xl mb-8 uppercase tracking-widest border-b border-white/5 pb-4">📖 Kronik Panjang Curse Community</h3>
+                
+                <!-- Chapter 1 -->
+                <div class="mb-12">
+                    <h4 class="minecraft-font text-white text-2xl mb-4 flex items-center gap-3">
+                        <span class="text-cyan-500">I.</span> Era Fajar: Curse Vanilla MCPE (Feb 2023)
+                    </h4>
+                    <p class="mb-4">
+                        Perjalanan epik ini dimulai dari sebuah mimpi sederhana oleh <span class="text-white">Mont</span>. Di tengah hiruk pikuk komunitas Minecraft PE yang kian kompleks, Mont ingin menghadirkan kembali esensi permainan: <span class="italic">Survival Murni</span>. Tanpa plugin yang berat, tanpa sistem yang membingungkan.
+                    </p>
+                    <p>
+                        Curse Vanilla lahir sebagai tempat berteduh bagi mereka yang merindukan petualangan autentik. Meskipun fasilitas terbatas, ikatan emosional antar pemain mulai terbentuk di sini. Ini adalah fondasi dari apa yang kita sebut sebagai "Curse Family".
+                    </p>
+                </div>
+
+                <!-- Chapter 2 -->
+                <div class="mb-12">
+                    <h4 class="minecraft-font text-white text-2xl mb-4 flex items-center gap-3">
+                        <span class="text-cyan-500">II.</span> Transformasi Kekuatan: Seri COLTK (Des 2023)
+                    </h4>
+                    <p class="mb-4">
+                        Menjelang akhir tahun 2023, komunitas menuntut tantangan yang lebih besar. Mont menjawabnya dengan meluncurkan <span class="text-white">COLTK (Curse of Legend: The Knight)</span>. Mengusung tema <span class="text-cyan-600 italic">Big Heart Challenge (BHC)</span>, setiap langkah pemain menjadi sangat krusial.
+                    </p>
+                    <p>
+                        Di era ini, sistem <span class="italic">Custom Enchant</span> level tinggi mulai diperkenalkan, menciptakan dinamika pertempuran yang lebih strategis. Pemain tidak hanya bertarung melawan monster, tetapi juga berlomba menjadi ksatria terkuat dalam sejarah komunitas.
+                    </p>
+                </div>
+
+                <!-- Chapter 3 -->
+                <div class="mb-12">
+                    <h4 class="minecraft-font text-white text-2xl mb-4 flex items-center gap-3">
+                        <span class="text-cyan-500">III.</span> Lonjakan Teknis: Kolaborasi Epan & Mont (Jan 2024)
+                    </h4>
+                    <p class="mb-4">
+                        Januari 2024 menandai revolusi teknis terbesar. Menyadari keterbatasan platform sebelumnya, Mont mulai berkolaborasi dengan <span class="text-white">Epan</span> untuk mendalami dunia <span class="text-cyan-600">Plugin Java Edition</span>. 
+                    </p>
+                    <p>
+                        Proses ini tidak mudah; ratusan jam dihabiskan untuk melakukan koding, uji coba bug, dan sinkronisasi sistem. Hasilnya? Lahirlah <span class="text-white">CFL (Curse Frontier Legacy)</span>, sebuah server dengan stabilitas tinggi dan fitur yang jauh melampaui standar server pada umumnya. Di sini, Epan membuktikan dirinya sebagai pilar teknis yang tak tergantikan.
+                    </p>
+                </div>
+
+                <!-- Chapter 4 -->
+                <div class="mb-12">
+                    <h4 class="minecraft-font text-white text-2xl mb-4 flex items-center gap-3">
+                        <span class="text-cyan-500">IV.</span> Era Keemasan: Cursebane Odyssey (2026)
+                    </h4>
+                    <p class="mb-4">
+                        Tahun 2026 membawa kita ke puncak pencapaian: <span class="text-white font-bold">Cursebane Odyssey</span>. Ini bukan sekadar server Minecraft; ini adalah dunia RPG hidup. Dengan sistem ekonomi yang matang, faksi-faksi yang bersaing, dan narasi cerita yang terus berkembang.
+                    </p>
+                    <p>
+                        Keberhasilan ini tidak lepas dari peran tokoh-tokoh seperti <span class="text-white">Rossy</span> (Animator utama), <span class="text-white">Rama</span> (Penulis Script), serta dukungan tak henti dari pemain setia seperti <span class="text-white">Latif, Ziorex, dan Ahmad</span>. Odyssey adalah bukti bahwa dengan visi yang kuat dan kerja sama tim, sebuah komunitas kecil bisa menjadi legenda yang abadi.
+                    </p>
+                </div>
+
+                <div class="p-8 bg-cyan-900/10 border border-cyan-500/20 rounded-sm mb-12">
+                    <p class="minecraft-font text-xl text-cyan-400 italic text-center">
+                        "Sejarah kita belum berakhir. Setiap blok yang kau hancurkan, setiap pedang yang kau tempa, adalah tinta bagi halaman selanjutnya."
+                    </p>
+                </div>
+
+                <button onclick="goToSlide('slide-hub')" class="w-full py-4 border border-gray-800 minecraft-font text-2xl hover:bg-white hover:text-black transition-all group">
+                    <span class="group-hover:tracking-[0.5em] transition-all">KEMBALI KE MAIN HUB</span>
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL: LEADERBOARD -->
+    <!-- MODAL: LEADERBOARD (Updated with MVP Donor Ahmad) -->
     <div id="modal-leaderboard" class="slide">
         <div class="glass-panel p-8 md:p-12 max-w-5xl w-full flex flex-col h-[85vh]">
             <h2 class="ancient-font text-4xl text-center text-white mb-2 uppercase">Hall of Elites</h2>
@@ -401,12 +489,22 @@
                         <span class="text-[11px] text-gray-500 uppercase tracking-widest group-hover:text-cyan-400 text-right">player yg bertahan 1 setengah tahun</span>
                     </div>
 
-                    <div class="p-3 bg-white/5 border-l-2 border-green-700/50 flex justify-between items-center group hover:bg-white/10 transition-colors">
-                        <div>
-                            <span class="minecraft-font text-xl text-green-600 mr-4">05</span>
-                            <span class="minecraft-font text-2xl">Ahmad</span>
+                    <!-- UPDATED: AHMAD MVP DONOR WITH GOLD AURA -->
+                    <div class="p-4 gold-aura-effect border-l-4 border-yellow-400 flex justify-between items-center group hover:brightness-125 transition-all relative">
+                        <div class="flex items-center gap-3 relative z-10">
+                            <span class="minecraft-font text-2xl text-yellow-500 font-bold">05</span>
+                            <div class="flex flex-col">
+                                <div class="flex items-center gap-2">
+                                    <span class="minecraft-font text-3xl text-white">Ahmad</span>
+                                    <span class="text-2xl animate-bounce">👑</span>
+                                </div>
+                                <span class="minecraft-font text-yellow-400 text-sm tracking-widest">MVP DONATUR</span>
+                            </div>
                         </div>
-                        <span class="text-[11px] text-green-700/70 uppercase tracking-widest group-hover:text-green-400 text-right">The best player donatur</span>
+                        <div class="text-right relative z-10">
+                            <span class="text-[12px] text-yellow-200/80 uppercase tracking-tighter block font-bold">PATRON OF ODYSSEY</span>
+                            <span class="text-[10px] text-yellow-600 uppercase">Ultimate Support Tier</span>
+                        </div>
                     </div>
 
                     <div class="p-3 bg-white/5 border-l-2 border-white/10 flex justify-between items-center group hover:bg-white/10 transition-colors">
@@ -459,10 +557,15 @@
                 </div>
 
                 <!-- MVP Section -->
-                <div class="grid grid-cols-2 gap-4 mt-4 border-t border-white/5 pt-6 pb-4">
+                <div class="grid grid-cols-3 gap-4 mt-4 border-t border-white/5 pt-6 pb-4">
                     <div class="text-center p-4 bg-cyan-950/20 border border-cyan-900/30">
                         <h4 class="minecraft-font text-cyan-500 text-lg tracking-widest mb-1">MVP PLAYER</h4>
                         <p class="minecraft-font text-3xl text-white">EPAN</p>
+                    </div>
+                    <div class="text-center p-4 bg-yellow-950/20 border border-yellow-500/30 relative overflow-hidden">
+                        <div class="absolute inset-0 bg-yellow-500/5 animate-pulse"></div>
+                        <h4 class="minecraft-font text-yellow-500 text-lg tracking-widest mb-1 relative z-10">MVP DONATUR</h4>
+                        <p class="minecraft-font text-3xl text-white relative z-10">AHMAD 👑</p>
                     </div>
                     <div class="text-center p-4 bg-purple-950/20 border border-purple-900/30">
                         <h4 class="minecraft-font text-purple-500 text-lg tracking-widest mb-1">MVP STREAMER</h4>
